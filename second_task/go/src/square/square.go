@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
 type Point struct {
@@ -21,13 +22,14 @@ func (my_square Square) Perimeter() uint {
 	return my_square.a * 4
 }
 
-//func (my_square Square) Area() uint {
-//	return pow(my_square.a, 2)
-//}
+func (my_square Square) Area() uint {
+	//	return uint(Pow(my_square.a, 2))  //как использовать эту функцию?
+	return my_square.a * my_square_a
+}
 
 func main() {
 	s := Square{Point{1, 1}, 5}
 	fmt.Println(s.End())
 	fmt.Println(s.Perimeter())
-//	fmt.Println(s.Area())
+	fmt.Println(s.Area())
 }
