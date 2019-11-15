@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-//	"math"
+	//	"math"
 )
 
 type Point struct {
@@ -23,7 +23,7 @@ func (my_square Square) Perimeter() uint {
 }
 
 func (my_square Square) Area() uint {
-	//	return uint(Pow(my_square.a, 2))  //как использовать эту функцию?
+	//return uint(Pow(float64(my_square.a), float64(2))) //как использовать эту функцию?
 	return my_square.a * my_square.a
 }
 
