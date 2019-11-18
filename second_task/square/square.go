@@ -14,16 +14,16 @@ type Square struct {
 	a     uint
 }
 
-func (MySquare Square) End() (XResult int, YResult int) {
-	return MySquare.start.x + int(MySquare.a), MySquare.start.y - int(MySquare.a)
+func (Sqr Square) End() (XResult int, YResult int) {
+	return Sqr.start.x + int(Sqr.a), Sqr.start.y - int(Sqr.a)
 }
 
-func (MySquare Square) Perimeter() uint {
-	return MySquare.a * 4
+func (Sqr Square) Perimeter() uint {
+	return Sqr.a * 4
 }
 
-func (MySquare Square) Area() uint {
-	return uint(math.Pow(float64(MySquare.a), float64(2)))
+func (Sqr Square) Area() uint {
+	return uint(math.Pow(float64(Sqr.a), float64(2)))
 }
 
 func main() {
