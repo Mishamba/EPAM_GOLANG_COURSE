@@ -2,15 +2,12 @@ package main
 
 import "fmt"
 
-func Factorial(GivenNumber uint) (Result uint) {
-	Result = 1
-	if GivenNumber == 0 {
-		return Result
+func Factorial(givenNumber uint) (result uint) {
+	result = 1
+	for i := givenNumber; i > 1; i-- {
+		result *= i
 	}
-	for i := GivenNumber; i > 1; i-- {
-		Result *= i
-	}
-	return Result
+	return result
 }
 
 func main() {

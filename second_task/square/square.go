@@ -14,8 +14,8 @@ type Square struct {
 	a     uint
 }
 
-func (Sqr Square) End() (XResult int, YResult int) {
-	return Sqr.start.x + int(Sqr.a), Sqr.start.y - int(Sqr.a)
+func (Sqr Square) End() Point {
+	return Point{Sqr.start.x + int(Sqr.a), Sqr.start.y - int(Sqr.a)}
 }
 
 func (Sqr Square) Perimeter() uint {
