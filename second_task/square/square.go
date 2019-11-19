@@ -14,16 +14,16 @@ type Square struct {
 	a     uint
 }
 
-func (Sqr Square) End() Point {
-	return Point{Sqr.start.x + int(Sqr.a), Sqr.start.y - int(Sqr.a)}
+func (sqr Square) End() Point {
+	return Point{sqr.start.x + int(sqr.a), sqr.start.y - int(sqr.a)}
 }
 
-func (Sqr Square) Perimeter() uint {
-	return Sqr.a * 4
+func (sqr Square) Perimeter() uint {
+	return sqr.a * 4
 }
 
-func (Sqr Square) Area() uint {
-	return uint(math.Pow(float64(Sqr.a), float64(2)))
+func (sqr Square) Area() uint {
+	return uint(math.Pow(float64(sqr.a), float64(2)))
 }
 
 func main() {
