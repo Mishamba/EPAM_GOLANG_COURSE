@@ -20,8 +20,6 @@ func printSorted(givenMap map[int]string) {
 		keys = append(keys, k)
 	}
 
-	fmt.Print(keys)
-
 	for i := 0; i < len(keys); i++ {
 		for j := i + 1; j < len(keys); j++ {
 			if keys[i] > keys[j] {
@@ -30,8 +28,11 @@ func printSorted(givenMap map[int]string) {
 		}
 	}
 
-	for k := range keys {
-		res = append(res, givenMap[k]) //не записывает последнее значение.
+	fmt.Println(keys)
+
+	for _, k := range keys {
+		fmt.Println(givenMap[k])
+		res = append(res, givenMap[k])
 	}
 
 	fmt.Println(res)
