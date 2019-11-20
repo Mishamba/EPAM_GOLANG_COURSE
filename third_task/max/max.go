@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"unicode/utf8"
+)
 
 func main() {
 	mySlice := []string{
@@ -14,9 +17,13 @@ func main() {
 }
 
 func max(givenSlice []string) (res string) {
+	if len(givenSlice) == 0 {
+		return ""
+	}
+
 	res = givenSlice[0]
 	for _, tmp := range givenSlice {
-		if len(res) < len(tmp) {
+		if utf8.RuneCountInString(res) < utf8.RuneCountInString(tmp) {
 			res = tmp
 		}
 	}
