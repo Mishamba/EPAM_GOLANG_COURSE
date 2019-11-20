@@ -9,7 +9,7 @@ func main() {
 	fmt.Println(average(myArray2[:]))
 }
 
-func average(givenArray []int) float64 { //не понял, как передать массив с неограниченным значением элементов. Вроде что-то с [...], но при компиляции выдавало ошибку ошибку выдавало
+func average(givenArray []int) float64 {
 	var Res int
 	for _, data := range givenArray {
 		Res += data

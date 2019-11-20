@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 func main() {
 	myMap := map[int]string{
@@ -20,18 +23,9 @@ func printSorted(givenMap map[int]string) {
 		keys = append(keys, k)
 	}
 
-	for i := 0; i < len(keys); i++ {
-		for j := i + 1; j < len(keys); j++ {
-			if keys[i] > keys[j] {
-				keys[i], keys[j] = keys[j], keys[i]
-			}
-		}
-	}
-
-	fmt.Println(keys)
+	sort.Ints(keys)
 
 	for _, k := range keys {
-		fmt.Println(givenMap[k])
 		res = append(res, givenMap[k])
 	}
 
