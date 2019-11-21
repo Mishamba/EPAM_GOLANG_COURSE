@@ -25,8 +25,8 @@ func printSorted(givenMap map[int]string) {
 
 	sort.Ints(keys)
 
-	for _, k := range keys {
-		res = append(res, givenMap[k])
+	for _, v := range keys {
+		res = append(res, givenMap[v])
 	}
 
 	fmt.Println(res)
