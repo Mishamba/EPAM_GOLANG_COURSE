@@ -31,7 +31,7 @@ func People() (res types.People) { //i'll left some questions
 	go func(c chan int) { //here user will create new Person
 		defer fmt.Println("u entered persons and now u will see result")
 		for {
-			if ans := <-c; ans == 2 {
+			if ans := <-c; ans == 2 { //when this condition works it still works till
 				exit <- "goroutines finished work"
 			}
 
@@ -39,7 +39,7 @@ func People() (res types.People) { //i'll left some questions
 			var newYear, newMonth, newDay int
 
 			fmt.Println("Enter Person")
-			fmt.Print("First and Last name: ")
+			fmt.Print("First and Last name: ") //here. i don't know why it happens(i can't deug my code, don't know, how to create config for goland)
 			_, err := fmt.Scan(&newFirstName, &newLastName)
 			if err != nil {
 				panic(err)
