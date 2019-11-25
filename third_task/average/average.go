@@ -10,10 +10,10 @@ func main() {
 }
 
 func average(givenArray []int) float64 {
-	var Res int
+	var res int
 	for _, data := range givenArray {
-		Res += data
+		res += data
 	}
 
-	return float64(Res) / float64(len(givenArray))
+	return float64(res) / float64(len(givenArray))
 }

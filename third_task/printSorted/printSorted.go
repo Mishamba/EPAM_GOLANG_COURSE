@@ -17,7 +17,6 @@ func main() {
 }
 
 func printSorted(givenMap map[int]string) {
-	res := []string{}
 	keys := []int{}
 	for k := range givenMap {
 		keys = append(keys, k)
@@ -26,8 +25,6 @@ func printSorted(givenMap map[int]string) {
 	sort.Ints(keys)
 
 	for _, v := range keys {
-		res = append(res, givenMap[v])
+		fmt.Println(givenMap[v])
 	}
-
-	fmt.Println(res)
 }
