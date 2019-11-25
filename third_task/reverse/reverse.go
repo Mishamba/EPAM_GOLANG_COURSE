@@ -5,8 +5,6 @@ import "fmt"
 func main() {
 	mySlice := []int{1, 2, 3, 4, 5}
 	fmt.Println(reverse(mySlice))
-	newSlice := reverse(mySlice)
-	fmt.Println(newSlice)
 }
 
 func reverse(givenSlice []int) (res []int) {
