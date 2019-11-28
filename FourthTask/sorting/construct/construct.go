@@ -3,7 +3,6 @@ package construct
 
 import (
 	"fmt"
-
 	"sync"
 
 	"github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types"
@@ -40,14 +39,14 @@ func People() (res types.People) { //i'll left some questions
 
 			fmt.Println("Enter Person")
 			fmt.Print("First and Last name: ") //here. i don't know why it happens(i can't deug my code, don't know, how to create config for goland)
-			_, err := fmt.Scan(&newFirstName, &newLastName)
-			if err != nil {
+
+			if _, err := fmt.Scan(&newFirstName, &newLastName); err != nil {
 				panic(err)
 			}
 
 			fmt.Print("Birtday year, month, day: ")
-			_, err = fmt.Scan(&newYear, &newMonth, &newDay)
-			if err != nil {
+
+			if _, err := fmt.Scan(&newYear, &newMonth, &newDay); err != nil {
 				panic(err)
 			}
 
@@ -59,5 +58,4 @@ func People() (res types.People) { //i'll left some questions
 	}(c)
 	<-exit
 	return res
-
 }
