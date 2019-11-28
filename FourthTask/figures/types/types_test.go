@@ -39,7 +39,8 @@ func TestErrors(t *testing.T) {
 	value = 4.0 * 5.0
 	assert.Equal(t, value, perimetr, "Perimetr for square returns wrong value")
 
-	value = math.Sqrt(math.MaxFloat64/math.Pi) + 1
+	//i found out, that int can't create overflow exception, so i deleted this checks in types.go and i woun't use this tests
+	/*value = math.Sqrt(math.MaxFloat64/math.Pi) + 1
 	if circle, err = NewCircle(int(value)); err != nil { // crashs here. err =  circle can't has negative radius
 		panic("test crash")
 	}
@@ -69,5 +70,5 @@ func TestErrors(t *testing.T) {
 	}
 	perimetr, err = square.Area()
 	assert.Equal(t, perimetr, 0, "Square perimetr exeption - overflow check not works")
-	assert.NotNil(t, err, "Square perimetr exeption - overflow check not works")
+	assert.NotNil(t, err, "Square perimetr exeption - overflow check not works")*/
 }

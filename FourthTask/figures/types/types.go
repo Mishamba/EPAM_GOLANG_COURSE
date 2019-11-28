@@ -31,16 +31,10 @@ func NewCircle(newRadius int) (Figure, error) {
 }
 
 func (c Circle) Area() (float64, error) {
-	if float64(c.radius) > math.Sqrt(math.MaxFloat64/math.Pi) {
-		return 0, overflowError
-	}
 	return math.Pi * math.Pow(float64(c.radius), 2), nil
 }
 
 func (c Circle) Perimetr() (float64, error) {
-	if float64(c.radius) > math.MaxFloat64/(2.0*math.Pi) {
-		return 0, overflowError
-	}
 	return 2.0 * math.Pi * float64(c.radius), nil
 }
 
@@ -56,15 +50,9 @@ func NewSquare(newSide int) (Figure, error) {
 }
 
 func (s Square) Area() (float64, error) {
-	if float64(s.side) > math.Sqrt(math.MaxFloat64) {
-		return 0, overflowError
-	}
 	return math.Pow(float64(s.side), 2), nil
 }
 
 func (s Square) Perimetr() (float64, error) {
-	if float64(s.side) > math.MaxFloat64/4.0 {
-		return 0, overflowError
-	}
 	return 4.0 * float64(s.side), nil
 }

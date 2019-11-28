@@ -28,10 +28,10 @@ func (p People) Less(i, j int) bool {
 	if diffDays < 0 {
 		return true
 	}
-	if p[j].LastName < p[i].FirstName {
+	if p[j].LastName < p[i].LastName {
 		return false
 	}
-	if p[j].LastName < p[i].FirstName {
+	if p[j].FirstName < p[i].FirstName {
 		return false
 	}
 	return true

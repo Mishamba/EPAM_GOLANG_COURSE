@@ -6,16 +6,10 @@ import (
 	"sort"
 
 	"github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/construct"
-	"github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/tests"
 	"github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types"
 )
 
 func main() {
-	if err := tests.Errors(); err != nil {
-		panic(err)
-	} else {
-		fmt.Println("All tests passed succesculy. Program can run")
-	}
 	fmt.Println("standart output")
 	var somePersons types.People = types.People{
 		types.Person{"g", "g", types.StartDate.AddDate(1990, 1, 1)},
