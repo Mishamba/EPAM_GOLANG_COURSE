@@ -20,7 +20,7 @@ func (p People) Len() int {
 }
 
 func (p People) Less(i, j int) bool {
-	result := p[i].Birthday.Before(p[j].Birthday)
+	result := p[j].Birthday.Before(p[i].Birthday)
 	return result
 }
 
@@ -39,7 +39,7 @@ func NewPeople(args ...Person) (result People) { //this fucn was created for tes
 	return result
 }
 
-func NewPerson(firstName string, lastName string, newYear, newMonth, newDay int) { //this func was created for tests
+func NewPerson(firstName string, lastName string, newYear, newMonth, newDay int) Person { //this func was created for tests
 	newBirthday := StartDate.AddDate(newYear, newMonth, newDay)
 
 	return Person{firstName, lastName, newBirthday}
