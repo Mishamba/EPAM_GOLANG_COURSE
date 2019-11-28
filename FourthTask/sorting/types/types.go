@@ -20,8 +20,21 @@ func (p People) Len() int {
 }
 
 func (p People) Less(i, j int) bool {
-	result := p[j].Birthday.Before(p[i].Birthday)
-	return result
+	diffDays := p[j].Birthday.Sub(p[i].Birthday) / 24
+
+	if diffDays > 0 {
+		return false
+	}
+	if diffDays < 0 {
+		return true
+	}
+	if p[j].LastName < p[i].FirstName {
+		return false
+	}
+	if p[j].LastName < p[i].FirstName {
+		return false
+	}
+	return true
 }
 
 func (p People) Swap(i, j int) {
