@@ -24,26 +24,16 @@ func main() {
 func myStrToInt(givenString string) (result float64, err error) {
 	numberType := map[string]bool{}
 
-	//wg.Add(5)
-	wrC := make(chan string)
-	binC := make(chan string)
-	intC := make(chan string)
-	flC := make(chan string)
-	hexadC := make(chan string)
+	wg.Add(5)
 
-	go wrongDataCheck(numberType, givenString, wrC)
-	go binaryCheck(numberType, givenString, binC)
-	go intCheck(numberType, givenString, intC)
+	go wrongDataCheck(numberType, givenString)
+	go binaryCheck(numberType, givenString)
+	go intCheck(numberType, givenString)
 	var dotPosition int
-	go floatCheck(numberType, givenString, &dotPosition, flC)
-	go hexadecimalCheck(numberType, givenString, hexadC)
+	go floatCheck(numberType, givenString, &dotPosition)
+	go hexadecimalCheck(numberType, givenString)
 
-	<-wrC
-	<-binC
-	<-intC
-	<-flC
-	<-hexadC
-	//wg.Wait()
+	wg.Wait()
 
 	var myType string
 	if myType, err = typeDefine(numberType); err != nil {
@@ -170,7 +160,6 @@ func hexadecimalConverter(givenString string) (result float64, err error) {
 		"E": 14,
 		"F": 15,
 	}
-	//TODO
 	for i := utf8.RuneCountInString(givenString) - 1; i > -1; i-- {
 		tmpString := givenString[i : i+1]
 		tmp := lettersCost[string(tmpString[0])]
@@ -181,9 +170,8 @@ func hexadecimalConverter(givenString string) (result float64, err error) {
 
 }
 
-func wrongDataCheck(result map[string]bool, given string, doneState chan string) {
-	//defer wg.Done()
-	defer stateInput(doneState)
+func wrongDataCheck(result map[string]bool, given string) {
+	defer wg.Done()
 	var dotCheck bool
 	var letterCheck bool
 	var dotPosition int
@@ -215,9 +203,8 @@ func wrongDataCheck(result map[string]bool, given string, doneState chan string)
 	result["wrongData"] = false
 }
 
-func binaryCheck(result map[string]bool, given string, doneState chan string) {
-	//defer wg.Done()
-	defer stateInput(doneState)
+func binaryCheck(result map[string]bool, given string) {
+	defer wg.Done()
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] == 48 || given[i] == 49) {
 			result["binary"] = false
@@ -228,9 +215,8 @@ func binaryCheck(result map[string]bool, given string, doneState chan string) {
 	result["binary"] = true
 }
 
-func intCheck(result map[string]bool, given string, doneState chan string) {
-	//defer wg.Done()
-	defer stateInput(doneState)
+func intCheck(result map[string]bool, given string) {
+	defer wg.Done()
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] >= 48 && given[i] <= 57) {
 			result["int"] = false
@@ -241,9 +227,8 @@ func intCheck(result map[string]bool, given string, doneState chan string) {
 	result["int"] = true
 }
 
-func floatCheck(result map[string]bool, given string, dotPosition *int, doneState chan string) {
-	//defer wg.Done()
-	defer stateInput(doneState)
+func floatCheck(result map[string]bool, given string, dotPosition *int) {
+	defer wg.Done()
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || given[i] == 46) {
 			result["float"] = false
@@ -262,9 +247,8 @@ func floatCheck(result map[string]bool, given string, dotPosition *int, doneStat
 	result["float"] = true
 }
 
-func hexadecimalCheck(result map[string]bool, given string, doneState chan string) {
-	//defer wg.Done()
-	defer stateInput(doneState)
+func hexadecimalCheck(result map[string]bool, given string) {
+	defer wg.Done()
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || (given[i] >= 65 && given[i] <= 70)) {
 			result["hexadecimal"] = false
@@ -273,8 +257,4 @@ func hexadecimalCheck(result map[string]bool, given string, doneState chan strin
 	}
 
 	result["hexadecimal"] = true
-}
-
-func stateInput(someChan chan string) { //looks like bad decision. report if it so
-	someChan <- "finished"
 }

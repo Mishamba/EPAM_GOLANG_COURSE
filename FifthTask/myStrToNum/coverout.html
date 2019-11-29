@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/myStrToNum/myStrToNum.go (38.2%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">//        This package can translate your number, given as a string, to NUMBER(int, float, ...)
+//        This task is complited, but i need some help. u can see, that i tried to do int with goroutined. Now routines are really helpful. and i need your help. show, how to start it there please.
+package main
+
+import (
+        "errors"
+        "fmt"
+        "math"
+        "strconv"
+        "sync"
+        "unicode/utf8"
+)
+
+var wg sync.WaitGroup
+
+func main() <span class="cov0" title="0">{
+        a, err := myStrToInt("10") //set value here(expected 1000000000)
+        if err != nil </span><span class="cov0" title="0">{
+                panic(err)</span>
+        }
+        <span class="cov0" title="0">fmt.Println(a)</span>
+}
+
+func myStrToInt(givenString string) (result float64, err error) <span class="cov0" title="0">{
+        numberType := map[string]bool{}
+
+        wg.Add(5)
+
+        go wrongDataCheck(numberType, givenString)
+        go binaryCheck(numberType, givenString)
+        go intCheck(numberType, givenString)
+        var dotPosition int
+        go floatCheck(numberType, givenString, &amp;dotPosition)
+        go hexadecimalCheck(numberType, givenString)
+
+        wg.Wait()
+
+        var myType string
+        if myType, err = typeDefine(numberType); err != nil </span><span class="cov0" title="0">{
+                return 0.0, err
+        }</span>
+
+        <span class="cov0" title="0">if myType == "wrongData" </span><span class="cov0" title="0">{
+                return 0.0, errors.New("u gave wrong data")
+        }</span>
+
+        <span class="cov0" title="0">fmt.Println("your type is", myType)
+
+        if myType == "binary" </span><span class="cov0" title="0">{
+                return binaryConverter(givenString)
+        }</span>
+
+        <span class="cov0" title="0">if myType == "int" </span><span class="cov0" title="0">{
+                return intConverter(givenString)
+        }</span>
+
+        <span class="cov0" title="0">if myType == "float" </span><span class="cov0" title="0">{
+                return floatConverter(givenString, dotPosition)
+        }</span>
+
+        <span class="cov0" title="0">if myType == "hexadecimal" </span><span class="cov0" title="0">{
+                return hexadecimalConverter(givenString)
+        }</span>
+
+        <span class="cov0" title="0">return 0.0, errors.New("smth went wrong. u need to debug this code...")</span>
+}
+
+func typeDefine(numberType map[string]bool) (string, error) <span class="cov0" title="0">{
+        var count int
+        var trueState string
+
+        for key, state := range numberType </span><span class="cov0" title="0">{
+                if state </span><span class="cov0" title="0">{
+                        count++
+                        trueState = key
+                }</span>
+        }
+
+        <span class="cov0" title="0">if count &gt; 1 </span><span class="cov0" title="0">{
+                if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil </span><span class="cov0" title="0">{
+                        return "", err
+                }</span>
+
+                <span class="cov0" title="0">fmt.Println()
+
+                for i, v := range numberType </span><span class="cov0" title="0">{
+                        if v </span><span class="cov0" title="0">{
+                                fmt.Println(i)
+                        }</span>
+                }
+
+                <span class="cov0" title="0">fmt.Println("Choose one (u need to enter one variant as a string)")
+
+                var usersChoose string
+                if _, err := fmt.Scan(&amp;usersChoose); err != nil </span><span class="cov0" title="0">{
+                        return "", err
+                }</span>
+
+                <span class="cov0" title="0">return usersChoose, nil</span>
+
+        }
+
+        <span class="cov0" title="0">return trueState, nil</span>
+}
+
+func binaryConverter(givenString string) (result float64, err error) <span class="cov0" title="0">{
+        for i := utf8.RuneCountInString(givenString) - 1; i &gt; -1; i-- </span><span class="cov0" title="0">{
+                tmpString := givenString[i : i+1] //looks like bad idea. if it can become better, so report
+                if tmp, err := strconv.Atoi(tmpString); err != nil </span><span class="cov0" title="0">{
+                        return 0.0, err
+                }</span> else<span class="cov0" title="0"> {
+                        result += float64(tmp) * math.Pow(2.0, float64(utf8.RuneCountInString(givenString)-i-1))
+                }</span>
+        }
+        <span class="cov0" title="0">fmt.Println()
+        return result, nil</span>
+}
+
+func intConverter(givenString string) (result float64, err error) <span class="cov0" title="0">{
+        if result, err := strconv.Atoi(givenString); err != nil </span><span class="cov0" title="0">{
+                return 0.0, err
+        }</span> else<span class="cov0" title="0"> {
+                return float64(result), nil
+        }</span>
+}
+
+func floatConverter(givenString string, dotPosition int) (result float64, err error) <span class="cov0" title="0">{
+        intPart := givenString[:dotPosition]
+        fractPart := givenString[dotPosition+1:]
+        intP, err := strconv.Atoi(intPart)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0.0, err
+        }</span>
+        <span class="cov0" title="0">fractP, err := strconv.Atoi(fractPart)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0.0, err
+        }</span>
+        <span class="cov0" title="0">result = float64(intP) + float64(fractP)/math.Pow(10.0, float64(utf8.RuneCountInString(fractPart)))
+
+        return result, nil</span>
+
+}
+
+func hexadecimalConverter(givenString string) (result float64, err error) <span class="cov0" title="0">{
+        lettersCost := map[string]int{
+                "0": 0, //if i can use here iota, please show how, because i couldn't find any exaple of using it it maps
+                "1": 1,
+                "2": 2,
+                "3": 3,
+                "4": 4,
+                "5": 5,
+                "6": 6,
+                "7": 7,
+                "8": 8,
+                "9": 9,
+                "A": 10,
+                "B": 11,
+                "C": 12,
+                "D": 13,
+                "E": 14,
+                "F": 15,
+        }
+        for i := utf8.RuneCountInString(givenString) - 1; i &gt; -1; i-- </span><span class="cov0" title="0">{
+                tmpString := givenString[i : i+1]
+                tmp := lettersCost[string(tmpString[0])]
+                result += float64(tmp) * math.Pow(16.0, float64(utf8.RuneCountInString(givenString)-i-1))
+        }</span>
+        <span class="cov0" title="0">fmt.Println()
+        return result, nil</span>
+
+}
+
+func wrongDataCheck(result map[string]bool, given string) <span class="cov8" title="1">{
+        defer wg.Done()
+        var dotCheck bool
+        var letterCheck bool
+        var dotPosition int
+        for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
+                if given[i] &lt; 46 || given[i] == 47 || (given[i] &gt;= 58 &amp;&amp; given[i] &lt;= 64) || given[i] &gt; 70 </span><span class="cov8" title="1">{
+                        result["wrongData"] = true
+                        return
+                }</span>
+
+                <span class="cov8" title="1">if given[i] == 46 </span><span class="cov8" title="1">{
+                        dotPosition = i
+                        dotCheck = true
+                }</span>
+                <span class="cov8" title="1">if given[i] &gt;= 65 &amp;&amp; given[i] &lt;= 70 </span><span class="cov8" title="1">{
+                        letterCheck = true
+                }</span>
+        }
+
+        <span class="cov8" title="1">if dotCheck &amp;&amp; letterCheck </span><span class="cov8" title="1">{ //if in string we have dots and letter together, so it's a mistake
+                result["wrongData"] = true
+                return
+        }</span>
+
+        <span class="cov8" title="1">if dotPosition == 0 &amp;&amp; dotCheck </span><span class="cov0" title="0">{
+                result["wrongData"] = true
+                return
+        }</span>
+
+        <span class="cov8" title="1">result["wrongData"] = false</span>
+}
+
+func binaryCheck(result map[string]bool, given string) <span class="cov8" title="1">{
+        defer wg.Done()
+        for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
+                if !(given[i] == 48 || given[i] == 49) </span><span class="cov8" title="1">{
+                        result["binary"] = false
+                        return
+                }</span>
+        }
+
+        <span class="cov8" title="1">result["binary"] = true</span>
+}
+
+func intCheck(result map[string]bool, given string) <span class="cov8" title="1">{
+        defer wg.Done()
+        for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
+                if !(given[i] &gt;= 48 &amp;&amp; given[i] &lt;= 57) </span><span class="cov8" title="1">{
+                        result["int"] = false
+                        return
+                }</span>
+        }
+
+        <span class="cov8" title="1">result["int"] = true</span>
+}
+
+func floatCheck(result map[string]bool, given string, dotPosition *int) <span class="cov8" title="1">{
+        defer wg.Done()
+        for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
+                if !((given[i] &gt;= 48 &amp;&amp; given[i] &lt;= 57) || given[i] == 46) </span><span class="cov8" title="1">{
+                        result["float"] = false
+                        return
+                }</span>
+                <span class="cov8" title="1">if given[i] == 46 </span><span class="cov8" title="1">{
+                        *dotPosition = i
+                }</span>
+        }
+
+        <span class="cov8" title="1">if *dotPosition == 0 </span><span class="cov8" title="1">{
+                result["float"] = false
+                return
+        }</span>
+
+        <span class="cov8" title="1">result["float"] = true</span>
+}
+
+func hexadecimalCheck(result map[string]bool, given string) <span class="cov8" title="1">{
+        defer wg.Done()
+        for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
+                if !((given[i] &gt;= 48 &amp;&amp; given[i] &lt;= 57) || (given[i] &gt;= 65 &amp;&amp; given[i] &lt;= 70)) </span><span class="cov8" title="1">{
+                        result["hexadecimal"] = false
+                        return
+                }</span>
+        }
+
+        <span class="cov8" title="1">result["hexadecimal"] = true</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
