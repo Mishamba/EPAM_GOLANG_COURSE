@@ -54,7 +54,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/myStrToNum/myStrToNum.go (83.5%)</option>
+				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/myStrToNum/myStrToNum.go (84.0%)</option>
 				
 				</select>
 			</div>
@@ -69,7 +69,6 @@
 		<div id="content">
 		
 		<pre class="file" id="file0" style="display: none">//        This package can translate your number, given as a string, to NUMBER(int, float, ...)
-//        This task is complited, but i need some help. u can see, that i tried to do int with goroutined. Now routines are really helpful. and i need your help. show, how to start it there please.
 package main
 
 import (
@@ -108,11 +107,7 @@ func myStrToNum(givenString string) (result float64, err error) <span class="cov
 
         myType, err := typeDefine(numberType)
 
-        if myType == "wrongData" </span><span class="cov8" title="1">{
-                return 0.0, errors.New("u gave wrong data")
-        }</span>
-
-        <span class="cov8" title="1">fmt.Println("your type is", myType)
+        fmt.Println("your type is", myType)
 
         if myType == "binary" </span><span class="cov0" title="0">{
                 return binaryConverter(givenString)
@@ -130,7 +125,7 @@ func myStrToNum(givenString string) (result float64, err error) <span class="cov
                 return hexadecimalConverter(givenString)
         }</span>
 
-        <span class="cov0" title="0">return 0.0, errors.New("smth went wrong. u need to debug this code...")</span>
+        <span class="cov8" title="1">return 0.0, errors.New("u gave wrong data")</span>
 }
 
 func typeDefine(numberType map[string]bool) (string, error) <span class="cov8" title="1">{
