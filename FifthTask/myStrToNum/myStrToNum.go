@@ -12,16 +12,7 @@ import (
 
 var wg sync.WaitGroup
 
-func main() {
-	a, err := myStrToNum("11111010110") //set value here
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(a)
-}
-
-func myStrToNum(givenString string) (result float64, err error) {
+func myStrToNum(givenString string, expectedType string) (result float64, err error) {
 	numberType := map[string]bool{}
 
 	wg.Add(5)
@@ -35,76 +26,89 @@ func myStrToNum(givenString string) (result float64, err error) {
 
 	wg.Wait()
 
-	myType, err := typeDefine(numberType)
+	myType, err := typeDefine(numberType, expectedType)
 
 	fmt.Println("your type is", myType)
 
-	if myType == "binary" {
-		return binaryConverter(givenString)
-	}
+	switch myType {
+	case "binary":
+		{
+			return binaryConverter(givenString)
+		}
 
-	if myType == "int" {
-		return intConverter(givenString)
-	}
+	case "int":
+		{
+			return intConverter(givenString)
+		}
 
-	if myType == "float" {
-		return floatConverter(givenString, dotPosition)
-	}
+	case "float":
+		{
+			return floatConverter(givenString, dotPosition)
+		}
 
-	if myType == "hexadecimal" {
-		return hexadecimalConverter(givenString)
-	}
+	case "hexadecimal":
+		{
+			return hexadecimalConverter(givenString)
+		}
 
-	return 0.0, errors.New("u gave wrong data")
+	default:
+		return 0.0, errors.New("u gave wrong data")
+	}
 }
 
-func typeDefine(numberType map[string]bool) (string, error) {
+func typeDefine(numberType map[string]bool, expectedType string) (string, error) {
 	if numberType["wrongData"] {
 		return "wrongData", errors.New("we received wrong data in typeDefine")
 	}
-	var count int
+	var typeCount int
 	var trueState string
 
 	for key, state := range numberType {
 		if state {
-			count++
+			typeCount++
 			trueState = key
 		}
 	}
 
-	if count == 0 {
+	if typeCount == 0 {
 		return "", errors.New("no TRUE types defined")
 	}
 
-	if count > 1 {
+	if typeCount > 1 {
 		if numberType["float"] {
 			return "", errors.New("received float with another types")
 		}
-		if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil { //in this comment stays code, which works, but can't pass tests
-			return "", err
-		}
-
-		fmt.Println()
-
-		for i, v := range numberType {
-			if v {
-				fmt.Println(i)
+		/*
+			if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil { //in this comment stays code, which works, but can't pass tests
+				return "", err
 			}
-		}
 
-		fmt.Println("Choose one (u need to enter one variant as a string)")
+			fmt.Println()
 
-		var usersChoose string
-		if _, err := fmt.Scan(&usersChoose); err != nil {
-			return "", err
-		}
+			for i, v := range numberType {
+				if v {
+					fmt.Println(i)
+				}
+			}
 
-		if numberType[usersChoose] {
-			return usersChoose, nil
+			fmt.Println("Choose one (u need to enter one variant as a string)")
+
+			var usersChoose string
+			if _, err := fmt.Scan(&usersChoose); err != nil {
+				return "", err
+			}
+
+			if numberType[usersChoose] {
+				return usersChoose, nil
+			} else {
+				return "", errors.New("u made a mistake, during entering one of the variants")
+			}*/
+
+		if numberType[expectedType] {
+			return expectedType, nil
 		} else {
-			return "", errors.New("u made a mistake, during entering one of the variants")
+			return "", errors.New("didn't recognized expectedType")
 		}
-		//return trueState, nil
 	}
 
 	return trueState, nil
@@ -202,12 +206,7 @@ func wrongDataCheck(result map[string]bool, given string) {
 		}
 	}
 
-	if dotCheck && letterCheck { //if in string we have dots and letter together, so it's a mistake
-		result["wrongData"] = true
-		return
-	}
-
-	if dotPosition == 0 && dotCheck {
+	if (dotCheck && letterCheck) || (dotPosition == 0 && dotCheck) { //if in string we have dots and letter together, so it's a mistake
 		result["wrongData"] = true
 		return
 	}

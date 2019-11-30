@@ -214,8 +214,8 @@ func TestTypeDefine(t *testing.T) {
 		"hexadecimal": true,
 	}
 
-	receivedType, err := typeDefine(someTypes)
 	expectedType := "wrongData"
+	receivedType, err := typeDefine(someTypes, expectedType)
 	assert.Equal(t, receivedType, expectedType, "expected \"wrongData\", but received smth different")
 	assert.NotNil(t, err, "expected \"smth\", but received \"nil\"")
 
@@ -227,8 +227,8 @@ func TestTypeDefine(t *testing.T) {
 	for k, _ := range someTypes {
 		someTypes[k] = false
 	}
-	receivedType, err = typeDefine(someTypes)
 	expectedType = ""
+	receivedType, err = typeDefine(someTypes, expectedType)
 	assert.Equal(t, receivedType, expectedType, "expected \"nothing\", but received smth different")
 	assert.NotNil(t, err, "expected \"smth\", but received \"nil\"")
 
@@ -236,8 +236,8 @@ func TestTypeDefine(t *testing.T) {
 	someTypes["int"] = true
 	someTypes["hexadecimal"] = true
 	someTypes["float"] = true
-	receivedType, err = typeDefine(someTypes)
 	expectedType = ""
+	receivedType, err = typeDefine(someTypes, expectedType)
 	assert.Equal(t, receivedType, expectedType, "expected \"nothing\", but received smth different")
 	assert.NotNil(t, err, "expected \"smth\", but received \"nil\"")
 
@@ -246,60 +246,69 @@ func TestTypeDefine(t *testing.T) {
 	}
 
 	someTypes["int"] = true
-	receivedType, err = typeDefine(someTypes)
 	expectedType = "int"
+	receivedType, err = typeDefine(someTypes, expectedType)
 	assert.Equal(t, receivedType, expectedType, "expected \"int\", but received smth different")
 	assert.Nil(t, err, "expected \"nil\", but received smth different")
 	someTypes["int"] = false
 
 	someTypes["float"] = true
-	receivedType, err = typeDefine(someTypes)
 	expectedType = "float"
+	receivedType, err = typeDefine(someTypes, expectedType)
 	assert.Equal(t, receivedType, expectedType, "expected \"float\", but received smth different")
 	assert.Nil(t, err, "expected \"nil\", but received smth different")
 	someTypes["float"] = false
 
 	someTypes["binary"] = true
-	receivedType, err = typeDefine(someTypes)
 	expectedType = "binary"
+	receivedType, err = typeDefine(someTypes, expectedType)
 	assert.Equal(t, receivedType, expectedType, "expected \"binary\", but received smth different")
 	assert.Nil(t, err, "expected \"nil\", but receivec smth different")
 	someTypes["binary"] = false
 
 	someTypes["hexadecimal"] = true
-	receivedType, err = typeDefine(someTypes)
 	expectedType = "hexadecimal"
+	receivedType, err = typeDefine(someTypes, expectedType)
 	assert.Equal(t, receivedType, expectedType, "expected \"hexadecimal\", but receibed smth different")
 	assert.Nil(t, err, "expected\"nil\", but received smth different")
 
-	/*someTypes["int"] = true //pass thi test from time to time
-	receivedType, err = typeDefine(someTypes)
-	expectedType = "hexadecimal"
-	assert.Equal(t, receivedType, expectedType, "expected \"int\", but received smth different")
-	assert.Nil(t, err, "expected \"nil\", but received smth different")*/
+	someTypes["int"] = true //pass thi test from time to time
+	receivedType, err = typeDefine(someTypes, expectedType)
+	assert.Equal(t, receivedType, expectedType, "expected \"hexadecimal\", but received smth different")
+	assert.Nil(t, err, "expected \"nil\", but received smth different")
+
+	receivedType, err = typeDefine(someTypes, "gexadecimol")
+	expectedType = ""
+	assert.Equal(t, receivedType, expectedType, "expected \"nothing\", but received smth different")
+	assert.NotNil(t, err, "expected \"smth\", but received \"nil\"")
 }
 
 func TestMyStrNum(t *testing.T) {
 	someString := "fdks351A"
-	receivedNumber, err := myStrToNum(someString)
+	receivedNumber, err := myStrToNum(someString, "wrongData")
 	var expectedNumber float64 = 0.0
 	assert.Equal(t, receivedNumber, expectedNumber, "expected \"0.0\", but received smth different")
 	assert.NotNil(t, err, "expected \"smth\", but received \"nil\"")
 
-	/*someString = "100101"
-	receivedNumber, err = myStrToNum(someString)
-	expectedNumber = //smth
-	assert.Equal(t, receivedNumber, expectedNumber, "expected \"351\", but received smth different")
-	assert.Nil(t, err, "expected \"nil\", but received \"smth\"")*/
+	someString = "11101010"
+	receivedNumber, err = myStrToNum(someString, "binary")
+	expectedNumber = 234.0
+	assert.Equal(t, receivedNumber, expectedNumber, "expected \"234\", but received smth different")
+	assert.Nil(t, err, "expected \"nil\", but received different")
+
+	receivedNumber, err = myStrToNum(someString, "int")
+	expectedNumber = 11101010
+	assert.Equal(t, receivedNumber, expectedNumber, "expected \"11101010\", but received smth different")
+	assert.Nil(t, err, "expected \"nil\", but received smth different")
 
 	someString = "1.6"
-	receivedNumber, err = myStrToNum(someString)
+	receivedNumber, err = myStrToNum(someString, "float")
 	expectedNumber = 1.6
 	assert.Equal(t, receivedNumber, expectedNumber, "expected \"1.632\", but received smth different")
 	assert.Nil(t, err, "expected \"nil\", but received \"smth\"")
 
 	someString = "F38A"
-	receivedNumber, err = myStrToNum(someString)
+	receivedNumber, err = myStrToNum(someString, "hexadecimal")
 	expectedNumber = 62346
 	assert.Equal(t, receivedNumber, expectedNumber, "expected \"62346\", but received smth different")
 	assert.Nil(t, err, "expected \"nil\", but received \"smth\"")

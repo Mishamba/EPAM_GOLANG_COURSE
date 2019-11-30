@@ -54,7 +54,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/myStrToNum/myStrToNum.go (84.0%)</option>
+				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/myStrToNum/myStrToNum.go (98.3%)</option>
 				
 				</select>
 			</div>
@@ -82,16 +82,7 @@ import (
 
 var wg sync.WaitGroup
 
-func main() <span class="cov0" title="0">{
-        a, err := myStrToNum("11111010110") //set value here
-        if err != nil </span><span class="cov0" title="0">{
-                panic(err)</span>
-        }
-
-        <span class="cov0" title="0">fmt.Println(a)</span>
-}
-
-func myStrToNum(givenString string) (result float64, err error) <span class="cov8" title="1">{
+func myStrToNum(givenString string, expectedType string) (result float64, err error) <span class="cov8" title="1">{
         numberType := map[string]bool{}
 
         wg.Add(5)
@@ -105,76 +96,89 @@ func myStrToNum(givenString string) (result float64, err error) <span class="cov
 
         wg.Wait()
 
-        myType, err := typeDefine(numberType)
+        myType, err := typeDefine(numberType, expectedType)
 
         fmt.Println("your type is", myType)
 
-        if myType == "binary" </span><span class="cov0" title="0">{
-                return binaryConverter(givenString)
-        }</span>
+        switch myType </span>{
+        case "binary":<span class="cov8" title="1">
+                </span><span class="cov8" title="1">{
+                        return binaryConverter(givenString)
+                }</span>
 
-        <span class="cov8" title="1">if myType == "int" </span><span class="cov0" title="0">{
-                return intConverter(givenString)
-        }</span>
+        case "int":<span class="cov8" title="1">
+                </span><span class="cov8" title="1">{
+                        return intConverter(givenString)
+                }</span>
 
-        <span class="cov8" title="1">if myType == "float" </span><span class="cov8" title="1">{
-                return floatConverter(givenString, dotPosition)
-        }</span>
+        case "float":<span class="cov8" title="1">
+                </span><span class="cov8" title="1">{
+                        return floatConverter(givenString, dotPosition)
+                }</span>
 
-        <span class="cov8" title="1">if myType == "hexadecimal" </span><span class="cov8" title="1">{
-                return hexadecimalConverter(givenString)
-        }</span>
+        case "hexadecimal":<span class="cov8" title="1">
+                </span><span class="cov8" title="1">{
+                        return hexadecimalConverter(givenString)
+                }</span>
 
-        <span class="cov8" title="1">return 0.0, errors.New("u gave wrong data")</span>
+        default:<span class="cov8" title="1">
+                return 0.0, errors.New("u gave wrong data")</span>
+        }
 }
 
-func typeDefine(numberType map[string]bool) (string, error) <span class="cov8" title="1">{
+func typeDefine(numberType map[string]bool, expectedType string) (string, error) <span class="cov8" title="1">{
         if numberType["wrongData"] </span><span class="cov8" title="1">{
                 return "wrongData", errors.New("we received wrong data in typeDefine")
         }</span>
-        <span class="cov8" title="1">var count int
+        <span class="cov8" title="1">var typeCount int
         var trueState string
 
         for key, state := range numberType </span><span class="cov8" title="1">{
                 if state </span><span class="cov8" title="1">{
-                        count++
+                        typeCount++
                         trueState = key
                 }</span>
         }
 
-        <span class="cov8" title="1">if count == 0 </span><span class="cov8" title="1">{
+        <span class="cov8" title="1">if typeCount == 0 </span><span class="cov8" title="1">{
                 return "", errors.New("no TRUE types defined")
         }</span>
 
-        <span class="cov8" title="1">if count &gt; 1 </span><span class="cov8" title="1">{
+        <span class="cov8" title="1">if typeCount &gt; 1 </span><span class="cov8" title="1">{
                 if numberType["float"] </span><span class="cov8" title="1">{
                         return "", errors.New("received float with another types")
                 }</span>
-                <span class="cov0" title="0">if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil </span><span class="cov0" title="0">{ //in this comment stays code, which works, but can't pass tests
-                        return "", err
+                /*
+                        if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil { //in this comment stays code, which works, but can't pass tests
+                                return "", err
+                        }
+
+                        fmt.Println()
+
+                        for i, v := range numberType {
+                                if v {
+                                        fmt.Println(i)
+                                }
+                        }
+
+                        fmt.Println("Choose one (u need to enter one variant as a string)")
+
+                        var usersChoose string
+                        if _, err := fmt.Scan(&amp;usersChoose); err != nil {
+                                return "", err
+                        }
+
+                        if numberType[usersChoose] {
+                                return usersChoose, nil
+                        } else {
+                                return "", errors.New("u made a mistake, during entering one of the variants")
+                        }*/
+
+                <span class="cov8" title="1">if numberType[expectedType] </span><span class="cov8" title="1">{
+                        return expectedType, nil
+                }</span> else<span class="cov8" title="1"> {
+                        return "", errors.New("didn't recognized expectedType")
                 }</span>
-
-                <span class="cov0" title="0">fmt.Println()
-
-                for i, v := range numberType </span><span class="cov0" title="0">{
-                        if v </span><span class="cov0" title="0">{
-                                fmt.Println(i)
-                        }</span>
-                }
-
-                <span class="cov0" title="0">fmt.Println("Choose one (u need to enter one variant as a string)")
-
-                var usersChoose string
-                if _, err := fmt.Scan(&amp;usersChoose); err != nil </span><span class="cov0" title="0">{
-                        return "", err
-                }</span>
-
-                <span class="cov0" title="0">if numberType[usersChoose] </span><span class="cov0" title="0">{
-                        return usersChoose, nil
-                }</span> else<span class="cov0" title="0"> {
-                        return "", errors.New("u made a mistake, during entering one of the variants")
-                }</span>
-                //return trueState, nil
         }
 
         <span class="cov8" title="1">return trueState, nil</span>
@@ -272,12 +276,7 @@ func wrongDataCheck(result map[string]bool, given string) <span class="cov8" tit
                 }</span>
         }
 
-        <span class="cov8" title="1">if dotCheck &amp;&amp; letterCheck </span><span class="cov8" title="1">{ //if in string we have dots and letter together, so it's a mistake
-                result["wrongData"] = true
-                return
-        }</span>
-
-        <span class="cov8" title="1">if dotPosition == 0 &amp;&amp; dotCheck </span><span class="cov8" title="1">{
+        <span class="cov8" title="1">if (dotCheck &amp;&amp; letterCheck) || (dotPosition == 0 &amp;&amp; dotCheck) </span><span class="cov8" title="1">{ //if in string we have dots and letter together, so it's a mistake
                 result["wrongData"] = true
                 return
         }</span>
