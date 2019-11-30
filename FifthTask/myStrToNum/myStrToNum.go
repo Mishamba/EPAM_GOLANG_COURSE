@@ -37,10 +37,6 @@ func myStrToNum(givenString string) (result float64, err error) {
 
 	myType, err := typeDefine(numberType)
 
-	if myType == "wrongData" {
-		return 0.0, errors.New("u gave wrong data")
-	}
-
 	fmt.Println("your type is", myType)
 
 	if myType == "binary" {
@@ -59,7 +55,7 @@ func myStrToNum(givenString string) (result float64, err error) {
 		return hexadecimalConverter(givenString)
 	}
 
-	return 0.0, errors.New("smth went wrong. u need to debug this code...")
+	return 0.0, errors.New("u gave wrong data")
 }
 
 func typeDefine(numberType map[string]bool) (string, error) {
