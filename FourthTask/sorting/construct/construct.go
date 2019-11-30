@@ -11,9 +11,9 @@ import (
 var wg sync.WaitGroup
 
 func People() (res types.People) { //i'll left some questions
-	exit := make(chan string) //this chan i'll use to exit function
 	cont := make(chan string)
-	c := make(chan int)   //chanel for data exchange
+	c := make(chan int) //chanel for data exchange
+	wg.Add(1)
 	go func(c chan int) { //here user will choose what to do(exit or enter new user)
 		for {
 			fmt.Print("\n1 - new person\n2 - show result\n")
@@ -29,9 +29,10 @@ func People() (res types.People) { //i'll left some questions
 
 	go func(c chan int) { //here user will create new Person
 		defer fmt.Println("u entered persons and now u will see result")
+		defer wg.Done()
 		for {
 			if ans := <-c; ans == 2 { //when this condition works it still works till
-				exit <- "goroutines finished work"
+				return
 			}
 
 			var newFirstName, newLastName string
@@ -56,6 +57,6 @@ func People() (res types.People) { //i'll left some questions
 			cont <- "can go"
 		}
 	}(c)
-	<-exit
+	wg.Wait()
 	return res
 }
