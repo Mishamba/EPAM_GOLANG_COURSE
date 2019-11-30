@@ -54,7 +54,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/myStrToNum/myStrToNum.go (92.6%)</option>
+				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/myStrToNum/myStrToNum.go (83.5%)</option>
 				
 				</select>
 			</div>
@@ -155,31 +155,31 @@ func typeDefine(numberType map[string]bool) (string, error) <span class="cov8" t
                 if numberType["float"] </span><span class="cov8" title="1">{
                         return "", errors.New("received float with another types")
                 }</span>
-                /*if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil {                //in this comment stays code, which works, but can't pass tests
+                <span class="cov0" title="0">if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil </span><span class="cov0" title="0">{ //in this comment stays code, which works, but can't pass tests
                         return "", err
-                }
+                }</span>
 
-                fmt.Println()
+                <span class="cov0" title="0">fmt.Println()
 
-                for i, v := range numberType {
-                        if v {
+                for i, v := range numberType </span><span class="cov0" title="0">{
+                        if v </span><span class="cov0" title="0">{
                                 fmt.Println(i)
-                        }
+                        }</span>
                 }
 
-                fmt.Println("Choose one (u need to enter one variant as a string)")
+                <span class="cov0" title="0">fmt.Println("Choose one (u need to enter one variant as a string)")
 
                 var usersChoose string
-                if _, err := fmt.Scan(&amp;usersChoose); err != nil {
+                if _, err := fmt.Scan(&amp;usersChoose); err != nil </span><span class="cov0" title="0">{
                         return "", err
-                }
+                }</span>
 
-                if numberType[usersChoose] {
+                <span class="cov0" title="0">if numberType[usersChoose] </span><span class="cov0" title="0">{
                         return usersChoose, nil
-                } else {
+                }</span> else<span class="cov0" title="0"> {
                         return "", errors.New("u made a mistake, during entering one of the variants")
-                }*/
-                <span class="cov8" title="1">return trueState, nil</span>
+                }</span>
+                //return trueState, nil
         }
 
         <span class="cov8" title="1">return trueState, nil</span>

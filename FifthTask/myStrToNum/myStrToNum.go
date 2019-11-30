@@ -1,5 +1,4 @@
 //	This package can translate your number, given as a string, to NUMBER(int, float, ...)
-//	This task is complited, but i need some help. u can see, that i tried to do int with goroutined. Now routines are really helpful. and i need your help. show, how to start it there please.
 package main
 
 import (
@@ -85,7 +84,7 @@ func typeDefine(numberType map[string]bool) (string, error) {
 		if numberType["float"] {
 			return "", errors.New("received float with another types")
 		}
-		/*if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil {		//in this comment stays code, which works, but can't pass tests
+		if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil { //in this comment stays code, which works, but can't pass tests
 			return "", err
 		}
 
@@ -108,8 +107,8 @@ func typeDefine(numberType map[string]bool) (string, error) {
 			return usersChoose, nil
 		} else {
 			return "", errors.New("u made a mistake, during entering one of the variants")
-		}*/
-		return trueState, nil
+		}
+		//return trueState, nil
 	}
 
 	return trueState, nil

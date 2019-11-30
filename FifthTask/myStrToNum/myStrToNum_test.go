@@ -183,7 +183,7 @@ func TestFloatConverter(t *testing.T) { //finish IT
 	assert.Equal(t, expectedNumber, receivedNumber, "expected \"0.0\", but received smth different")
 	assert.NotNil(t, err, "expected \"smth\", but received \"nil\"")
 
-	someString = "6b332a853"
+	someString = "!@!@!@!@!"
 	dotPosition = 4
 	receivedNumber, err = floatConverter(someString, dotPosition)
 	expectedNumber = 0.0
