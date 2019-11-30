@@ -54,7 +54,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/myStrToNum/myStrToNum.go (98.3%)</option>
+				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/myStrToNum/myStrToNum.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -212,11 +212,11 @@ func floatConverter(givenString string, dotPosition int) (result float64, err er
         }</span>
         <span class="cov8" title="1">fractPart := givenString[dotPosition+1:]
         var intP int
-        if intP, err = strconv.Atoi(intPart); err != nil </span><span class="cov0" title="0">{
+        if intP, err = strconv.Atoi(intPart); err != nil </span><span class="cov8" title="1">{
                 return 0.0, err
         }</span>
         <span class="cov8" title="1">var fractP int
-        if fractP, err = strconv.Atoi(fractPart); err != nil </span><span class="cov0" title="0">{
+        if fractP, err = strconv.Atoi(fractPart); err != nil </span><span class="cov8" title="1">{
                 return 0.0, err
         }</span>
         <span class="cov8" title="1">result = float64(intP) + float64(fractP)/math.Pow(10.0, float64(utf8.RuneCountInString(fractPart)))

@@ -99,12 +99,10 @@ func TestFloatCheck(t *testing.T) {
 
 	someString = "1.g463A"
 	receiveType["float"] = true
-	//expectedDotPosition = 1		//if same test passed succesfuly, so we don't need to run it again with another data?
 	wg.Add(1)
 	floatCheck(receiveType, someString, &receiveDotPosition)
 	wg.Wait()
 	assert.True(t, !receiveType["float"], "expected \"FALSE\", but received \"TRUE\"")
-	//assert.Equal(t, expectedDotPosition, receiveDotPosition, "dot expected at \"1\" position, but received another")
 
 	someString = ".463"
 	receiveType["float"] = true
@@ -169,7 +167,7 @@ func TestFloatConverter(t *testing.T) { //finish IT
 	assert.Equal(t, expectedNumber, receivedNumber, "expected \"6332.853\", but received smth different")
 	assert.Nil(t, err, "expected \"nil\", but received smth different")
 
-	someString = "6332a853"
+	someString = "63f2.853"
 	dotPosition = 4
 	receivedNumber, err = floatConverter(someString, dotPosition)
 	expectedNumber = 0.0
@@ -189,6 +187,14 @@ func TestFloatConverter(t *testing.T) { //finish IT
 	expectedNumber = 0.0
 	assert.Equal(t, expectedNumber, receivedNumber, "expected \"0.0\", but received smth different")
 	assert.NotNil(t, err, "expected \"smth\", but received smth \"nil\"")
+
+	someString = "6432.8g53"
+	dotPosition = 4
+	receivedNumber, err = floatConverter(someString, dotPosition)
+	expectedNumber = 0.0
+	assert.Equal(t, expectedNumber, receivedNumber, "expected \"0.0\", but received smth different")
+	assert.NotNil(t, err, "expected \"smth\", but received smth \"nil\"")
+
 }
 
 func TestHexadecimalConverter(t *testing.T) {
