@@ -14,14 +14,15 @@ import (
 var wg sync.WaitGroup
 
 func main() {
-	a, err := myStrToInt("10") //set value here(expected 1000000000)
+	a, err := myStrToNum("11111010110") //set value here
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Println(a)
 }
 
-func myStrToInt(givenString string) (result float64, err error) {
+func myStrToNum(givenString string) (result float64, err error) {
 	numberType := map[string]bool{}
 
 	wg.Add(5)
@@ -35,10 +36,7 @@ func myStrToInt(givenString string) (result float64, err error) {
 
 	wg.Wait()
 
-	var myType string
-	if myType, err = typeDefine(numberType); err != nil {
-		return 0.0, err
-	}
+	myType, err := typeDefine(numberType)
 
 	if myType == "wrongData" {
 		return 0.0, errors.New("u gave wrong data")
@@ -66,6 +64,9 @@ func myStrToInt(givenString string) (result float64, err error) {
 }
 
 func typeDefine(numberType map[string]bool) (string, error) {
+	if numberType["wrongData"] {
+		return "wrongData", errors.New("we received wrong data in typeDefine")
+	}
 	var count int
 	var trueState string
 
@@ -76,8 +77,15 @@ func typeDefine(numberType map[string]bool) (string, error) {
 		}
 	}
 
+	if count == 0 {
+		return "", errors.New("no TRUE types defined")
+	}
+
 	if count > 1 {
-		if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil {
+		if numberType["float"] {
+			return "", errors.New("received float with another types")
+		}
+		/*if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil {		//in this comment stays code, which works, but can't pass tests
 			return "", err
 		}
 
@@ -96,8 +104,12 @@ func typeDefine(numberType map[string]bool) (string, error) {
 			return "", err
 		}
 
-		return usersChoose, nil
-
+		if numberType[usersChoose] {
+			return usersChoose, nil
+		} else {
+			return "", errors.New("u made a mistake, during entering one of the variants")
+		}*/
+		return trueState, nil
 	}
 
 	return trueState, nil
@@ -106,7 +118,7 @@ func typeDefine(numberType map[string]bool) (string, error) {
 func binaryConverter(givenString string) (result float64, err error) {
 	for i := utf8.RuneCountInString(givenString) - 1; i > -1; i-- {
 		tmpString := givenString[i : i+1] //looks like bad idea. if it can become better, so report
-		if tmp, err := strconv.Atoi(tmpString); err != nil {
+		if tmp, err := strconv.Atoi(string(tmpString)); err != nil {
 			return 0.0, err
 		} else {
 			result += float64(tmp) * math.Pow(2.0, float64(utf8.RuneCountInString(givenString)-i-1))
@@ -126,19 +138,21 @@ func intConverter(givenString string) (result float64, err error) {
 
 func floatConverter(givenString string, dotPosition int) (result float64, err error) {
 	intPart := givenString[:dotPosition]
+	if string(givenString[dotPosition]) != "." {
+		return 0.0, errors.New("on dot position received smth difference")
+	}
 	fractPart := givenString[dotPosition+1:]
-	intP, err := strconv.Atoi(intPart)
-	if err != nil {
+	var intP int
+	if intP, err = strconv.Atoi(intPart); err != nil {
 		return 0.0, err
 	}
-	fractP, err := strconv.Atoi(fractPart)
-	if err != nil {
+	var fractP int
+	if fractP, err = strconv.Atoi(fractPart); err != nil {
 		return 0.0, err
 	}
 	result = float64(intP) + float64(fractP)/math.Pow(10.0, float64(utf8.RuneCountInString(fractPart)))
 
 	return result, nil
-
 }
 
 func hexadecimalConverter(givenString string) (result float64, err error) {
@@ -162,6 +176,9 @@ func hexadecimalConverter(givenString string) (result float64, err error) {
 	}
 	for i := utf8.RuneCountInString(givenString) - 1; i > -1; i-- {
 		tmpString := givenString[i : i+1]
+		if !((givenString[i] >= 48 && givenString[i] <= 57) || (givenString[i] >= 65 && givenString[i] <= 70)) {
+			return 0.0, errors.New("in hexadecimalconverter was given not hexidecimal number")
+		}
 		tmp := lettersCost[string(tmpString[0])]
 		result += float64(tmp) * math.Pow(16.0, float64(utf8.RuneCountInString(givenString)-i-1))
 	}
