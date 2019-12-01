@@ -54,7 +54,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/tmp/tmp.go (100.0%)</option>
+				<option value="file0">github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/my_str_to_num/sec_solution/tmp.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -76,11 +76,18 @@ import (
         "fmt"
         "math"
         "strconv"
+        "sync"
         "unicode/utf8"
 )
 
+var wg sync.WaitGroup
+var elemWG int
+
 func myStrToNum(givenString string, expectedType string) (result float64, err error) <span class="cov8" title="1">{
         numberType := map[string]bool{}
+
+        createWG(&amp;elemWG, 0)
+        wg.Add(elemWG)
 
         wrongDataCheck(numberType, givenString)
         binaryCheck(numberType, givenString)
@@ -88,6 +95,8 @@ func myStrToNum(givenString string, expectedType string) (result float64, err er
         var dotPosition int
         floatCheck(numberType, givenString, &amp;dotPosition)
         hexadecimalCheck(numberType, givenString)
+
+        wg.Wait()
 
         myType, err := typeDefine(numberType, expectedType)
 
@@ -118,6 +127,10 @@ func myStrToNum(givenString string, expectedType string) (result float64, err er
                 return 0.0, errors.New("u gave wrong data")</span>
         }
 }
+
+func createWG(elemCount *int, elemAdd int) <span class="cov8" title="1">{
+        *elemCount = elemAdd
+}</span>
 
 func typeDefine(numberType map[string]bool, expectedType string) (string, error) <span class="cov8" title="1">{
         if numberType["wrongData"] </span><span class="cov8" title="1">{
@@ -250,7 +263,10 @@ func hexadecimalConverter(givenString string) (result float64, err error) <span 
 }
 
 func wrongDataCheck(result map[string]bool, given string) <span class="cov8" title="1">{
-        var dotCheck bool
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
+                defer wg.Done()
+        }</span>
+        <span class="cov8" title="1">var dotCheck bool
         var letterCheck bool
         var dotPosition int
         for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
@@ -277,7 +293,10 @@ func wrongDataCheck(result map[string]bool, given string) <span class="cov8" tit
 }
 
 func binaryCheck(result map[string]bool, given string) <span class="cov8" title="1">{
-        for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
+                defer wg.Done()
+        }</span>
+        <span class="cov8" title="1">for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
                 if !(given[i] == 48 || given[i] == 49) </span><span class="cov8" title="1">{
                         result["binary"] = false
                         return
@@ -288,7 +307,10 @@ func binaryCheck(result map[string]bool, given string) <span class="cov8" title=
 }
 
 func intCheck(result map[string]bool, given string) <span class="cov8" title="1">{
-        for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
+                defer wg.Done()
+        }</span>
+        <span class="cov8" title="1">for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
                 if !(given[i] &gt;= 48 &amp;&amp; given[i] &lt;= 57) </span><span class="cov8" title="1">{
                         result["int"] = false
                         return
@@ -299,7 +321,10 @@ func intCheck(result map[string]bool, given string) <span class="cov8" title="1"
 }
 
 func floatCheck(result map[string]bool, given string, dotPosition *int) <span class="cov8" title="1">{
-        for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
+                defer wg.Done()
+        }</span>
+        <span class="cov8" title="1">for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
                 if !((given[i] &gt;= 48 &amp;&amp; given[i] &lt;= 57) || given[i] == 46) </span><span class="cov8" title="1">{
                         result["float"] = false
                         return
@@ -318,7 +343,10 @@ func floatCheck(result map[string]bool, given string, dotPosition *int) <span cl
 }
 
 func hexadecimalCheck(result map[string]bool, given string) <span class="cov8" title="1">{
-        for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
+                defer wg.Done()
+        }</span>
+        <span class="cov8" title="1">for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
                 if !((given[i] &gt;= 48 &amp;&amp; given[i] &lt;= 57) || (given[i] &gt;= 65 &amp;&amp; given[i] &lt;= 70)) </span><span class="cov8" title="1">{
                         result["hexadecimal"] = false
                         return

@@ -4,44 +4,48 @@ package main
 import (
 	"errors"
 	"fmt"
-	"math"
-	"strconv"
-	"unicode/utf8"
 )
+
+//var wg sync.WaitGroup
+//var elemWG int
 
 func myStrToNum2(givenString string, expectedType string) (result float64, err error) {
 	numberType := map[string]bool{}
 
-	wrongDataCheck2(numberType, givenString)
-	binaryCheck2(numberType, givenString)
-	intCheck2(numberType, givenString)
-	var dotPosition int
-	floatCheck2(numberType, givenString, &dotPosition)
-	hexadecimalCheck2(numberType, givenString)
+	createWG(&elemWG, 0)
+	wg.Add(elemWG)
 
-	myType, err := typeDefine2(numberType, expectedType)
+	wrongDataCheck(numberType, givenString)
+	binaryCheck(numberType, givenString)
+	intCheck(numberType, givenString)
+	var dotPosition int
+	hexadecimalCheck(numberType, givenString)
+
+	wg.Wait()
+
+	myType, err := typeDefine(numberType, expectedType)
 
 	fmt.Println("your type is", myType)
 
 	switch myType {
 	case "binary":
 		{
-			return binaryConverter2(givenString)
+			return binaryConverter(givenString)
 		}
 
 	case "int":
 		{
-			return intConverter2(givenString)
+			return intConverter(givenString)
 		}
 
 	case "float":
 		{
-			return floatConverter2(givenString, dotPosition)
+			return floatConverter(givenString, dotPosition)
 		}
 
 	case "hexadecimal":
 		{
-			return hexadecimalConverter2(givenString)
+			return hexadecimalConverter(givenString)
 		}
 
 	default:
@@ -49,7 +53,12 @@ func myStrToNum2(givenString string, expectedType string) (result float64, err e
 	}
 }
 
-func typeDefine2(numberType map[string]bool, expectedType string) (string, error) {
+/*
+func createWG(elemCount *int, elemAdd int) {
+	*elemCount = elemAdd
+}
+
+func typeDefine(numberType map[string]bool, expectedType string) (string, error) {
 	if numberType["wrongData"] {
 		return "wrongData", errors.New("we received wrong data in typeDefine")
 	}
@@ -71,6 +80,31 @@ func typeDefine2(numberType map[string]bool, expectedType string) (string, error
 		if numberType["float"] {
 			return "", errors.New("received float with another types")
 		}
+		/*
+			if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil { //in this comment stays code, which works, but can't pass tests
+				return "", err
+			}
+
+			fmt.Println()
+
+			for i, v := range numberType {
+				if v {
+					fmt.Println(i)
+				}
+			}
+
+			fmt.Println("Choose one (u need to enter one variant as a string)")
+
+			var usersChoose string
+			if _, err := fmt.Scan(&usersChoose); err != nil {
+				return "", err
+			}
+
+			if numberType[usersChoose] {
+				return usersChoose, nil
+			} else {
+				return "", errors.New("u made a mistake, during entering one of the variants")
+			} //HEED TO CLOSE COMMENT HERE
 
 		if numberType[expectedType] {
 			return expectedType, nil
@@ -82,7 +116,7 @@ func typeDefine2(numberType map[string]bool, expectedType string) (string, error
 	return trueState, nil
 }
 
-func binaryConverter2(givenString string) (result float64, err error) {
+func binaryConverter(givenString string) (result float64, err error) {
 	for i := utf8.RuneCountInString(givenString) - 1; i > -1; i-- {
 		tmpString := givenString[i : i+1] //looks like bad idea. if it can become better, so report
 		if tmp, err := strconv.Atoi(string(tmpString)); err != nil {
@@ -95,7 +129,7 @@ func binaryConverter2(givenString string) (result float64, err error) {
 	return result, nil
 }
 
-func intConverter2(givenString string) (result float64, err error) {
+func intConverter(givenString string) (result float64, err error) {
 	if result, err := strconv.Atoi(givenString); err != nil {
 		return 0.0, err
 	} else {
@@ -103,7 +137,7 @@ func intConverter2(givenString string) (result float64, err error) {
 	}
 }
 
-func floatConverter2(givenString string, dotPosition int) (result float64, err error) {
+func floatConverter(givenString string, dotPosition int) (result float64, err error) {
 	intPart := givenString[:dotPosition]
 	if string(givenString[dotPosition]) != "." {
 		return 0.0, errors.New("on dot position received smth difference")
@@ -122,7 +156,7 @@ func floatConverter2(givenString string, dotPosition int) (result float64, err e
 	return result, nil
 }
 
-func hexadecimalConverter2(givenString string) (result float64, err error) {
+func hexadecimalConverter(givenString string) (result float64, err error) {
 	lettersCost := map[string]int{
 		"0": 0, //if i can use here iota, please show how, because i couldn't find any exaple of using it it maps
 		"1": 1,
@@ -154,7 +188,10 @@ func hexadecimalConverter2(givenString string) (result float64, err error) {
 
 }
 
-func wrongDataCheck2(result map[string]bool, given string) {
+func wrongDataCheck(result map[string]bool, given string) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	var dotCheck bool
 	var letterCheck bool
 	var dotPosition int
@@ -181,7 +218,10 @@ func wrongDataCheck2(result map[string]bool, given string) {
 	result["wrongData"] = false
 }
 
-func binaryCheck2(result map[string]bool, given string) {
+func binaryCheck(result map[string]bool, given string) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] == 48 || given[i] == 49) {
 			result["binary"] = false
@@ -192,7 +232,10 @@ func binaryCheck2(result map[string]bool, given string) {
 	result["binary"] = true
 }
 
-func intCheck2(result map[string]bool, given string) {
+func intCheck(result map[string]bool, given string) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] >= 48 && given[i] <= 57) {
 			result["int"] = false
@@ -203,7 +246,10 @@ func intCheck2(result map[string]bool, given string) {
 	result["int"] = true
 }
 
-func floatCheck2(result map[string]bool, given string, dotPosition *int) {
+func floatCheck(result map[string]bool, given string, dotPosition *int) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || given[i] == 46) {
 			result["float"] = false
@@ -222,7 +268,10 @@ func floatCheck2(result map[string]bool, given string, dotPosition *int) {
 	result["float"] = true
 }
 
-func hexadecimalCheck2(result map[string]bool, given string) {
+func hexadecimalCheck(result map[string]bool, given string) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || (given[i] >= 65 && given[i] <= 70)) {
 			result["hexadecimal"] = false
@@ -231,4 +280,4 @@ func hexadecimalCheck2(result map[string]bool, given string) {
 	}
 
 	result["hexadecimal"] = true
-}
+}*/

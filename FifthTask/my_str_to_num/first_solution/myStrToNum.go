@@ -17,9 +17,7 @@ func myStrToNum(givenString string, expectedType string) (result float64, err er
 	numberType := map[string]bool{}
 
 	createWG(&elemWG, 5)
-	if elemWG > 0 {
-		wg.Add(elemWG)
-	}
+	wg.Add(elemWG)
 
 	go wrongDataCheck(numberType, givenString)
 	go binaryCheck(numberType, givenString)
@@ -28,9 +26,7 @@ func myStrToNum(givenString string, expectedType string) (result float64, err er
 	go floatCheck(numberType, givenString, &dotPosition)
 	go hexadecimalCheck(numberType, givenString)
 
-	if elemWG > 0 {
-		wg.Wait()
-	}
+	wg.Wait()
 
 	myType, err := typeDefine(numberType, expectedType)
 

@@ -81,27 +81,24 @@ import (
 )
 
 var wg sync.WaitGroup
-var elemWG int = 5
+var elemWG int
 
 func myStrToNum(givenString string, expectedType string) (result float64, err error) <span class="cov8" title="1">{
         numberType := map[string]bool{}
 
-        if elemWG &gt; 1 </span><span class="cov8" title="1">{
-                wg.Add(elemWG)
-        }</span>
+        createWG(&amp;elemWG, 5)
+        wg.Add(elemWG)
 
-        <span class="cov8" title="1">go wrongDataCheck(numberType, givenString)
+        go wrongDataCheck(numberType, givenString)
         go binaryCheck(numberType, givenString)
         go intCheck(numberType, givenString)
         var dotPosition int
         go floatCheck(numberType, givenString, &amp;dotPosition)
         go hexadecimalCheck(numberType, givenString)
 
-        if elemWG &gt; 1 </span><span class="cov8" title="1">{
-                wg.Wait()
-        }</span>
+        wg.Wait()
 
-        <span class="cov8" title="1">myType, err := typeDefine(numberType, expectedType)
+        myType, err := typeDefine(numberType, expectedType)
 
         fmt.Println("your type is", myType)
 
@@ -131,8 +128,8 @@ func myStrToNum(givenString string, expectedType string) (result float64, err er
         }
 }
 
-func createWG(elemCount *int) <span class="cov8" title="1">{
-        *elemCount = 5
+func createWG(elemCount *int, elemAdd int) <span class="cov8" title="1">{
+        *elemCount = elemAdd
 }</span>
 
 func typeDefine(numberType map[string]bool, expectedType string) (string, error) <span class="cov8" title="1">{
@@ -266,7 +263,7 @@ func hexadecimalConverter(givenString string) (result float64, err error) <span 
 }
 
 func wrongDataCheck(result map[string]bool, given string) <span class="cov8" title="1">{
-        if elemWG &gt; 1 </span><span class="cov8" title="1">{
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
                 defer wg.Done()
         }</span>
         <span class="cov8" title="1">var dotCheck bool
@@ -296,7 +293,7 @@ func wrongDataCheck(result map[string]bool, given string) <span class="cov8" tit
 }
 
 func binaryCheck(result map[string]bool, given string) <span class="cov8" title="1">{
-        if elemWG &gt; 1 </span><span class="cov8" title="1">{
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
                 defer wg.Done()
         }</span>
         <span class="cov8" title="1">for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
@@ -310,7 +307,7 @@ func binaryCheck(result map[string]bool, given string) <span class="cov8" title=
 }
 
 func intCheck(result map[string]bool, given string) <span class="cov8" title="1">{
-        if elemWG &gt; 1 </span><span class="cov8" title="1">{
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
                 defer wg.Done()
         }</span>
         <span class="cov8" title="1">for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
@@ -324,7 +321,7 @@ func intCheck(result map[string]bool, given string) <span class="cov8" title="1"
 }
 
 func floatCheck(result map[string]bool, given string, dotPosition *int) <span class="cov8" title="1">{
-        if elemWG &gt; 1 </span><span class="cov8" title="1">{
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
                 defer wg.Done()
         }</span>
         <span class="cov8" title="1">for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{
@@ -346,7 +343,7 @@ func floatCheck(result map[string]bool, given string, dotPosition *int) <span cl
 }
 
 func hexadecimalCheck(result map[string]bool, given string) <span class="cov8" title="1">{
-        if elemWG &gt; 1 </span><span class="cov8" title="1">{
+        if elemWG &gt; 0 </span><span class="cov8" title="1">{
                 defer wg.Done()
         }</span>
         <span class="cov8" title="1">for i := 0; i &lt; utf8.RuneCountInString(given); i++ </span><span class="cov8" title="1">{

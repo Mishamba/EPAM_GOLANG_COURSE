@@ -6,18 +6,27 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"sync"
 	"unicode/utf8"
 )
 
-func myStrToNum(givenString string, expectedType string) (result float64, err error) {
+var wg sync.WaitGroup
+var elemWG int
+
+func myStrToNum1(givenString string, expectedType string) (result float64, err error) {
 	numberType := map[string]bool{}
 
-	wrongDataCheck(numberType, givenString)
-	binaryCheck(numberType, givenString)
-	intCheck(numberType, givenString)
+	createWG(&elemWG, 5)
+	wg.Add(elemWG)
+
+	go wrongDataCheck(numberType, givenString)
+	go binaryCheck(numberType, givenString)
+	go intCheck(numberType, givenString)
 	var dotPosition int
-	floatCheck(numberType, givenString, &dotPosition)
-	hexadecimalCheck(numberType, givenString)
+	go floatCheck(numberType, givenString, &dotPosition)
+	go hexadecimalCheck(numberType, givenString)
+
+	wg.Wait()
 
 	myType, err := typeDefine(numberType, expectedType)
 
@@ -47,6 +56,10 @@ func myStrToNum(givenString string, expectedType string) (result float64, err er
 	default:
 		return 0.0, errors.New("u gave wrong data")
 	}
+}
+
+func createWG(elemCount *int, elemAdd int) {
+	*elemCount = elemAdd
 }
 
 func typeDefine(numberType map[string]bool, expectedType string) (string, error) {
@@ -180,6 +193,9 @@ func hexadecimalConverter(givenString string) (result float64, err error) {
 }
 
 func wrongDataCheck(result map[string]bool, given string) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	var dotCheck bool
 	var letterCheck bool
 	var dotPosition int
@@ -207,6 +223,9 @@ func wrongDataCheck(result map[string]bool, given string) {
 }
 
 func binaryCheck(result map[string]bool, given string) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] == 48 || given[i] == 49) {
 			result["binary"] = false
@@ -218,6 +237,9 @@ func binaryCheck(result map[string]bool, given string) {
 }
 
 func intCheck(result map[string]bool, given string) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] >= 48 && given[i] <= 57) {
 			result["int"] = false
@@ -229,6 +251,9 @@ func intCheck(result map[string]bool, given string) {
 }
 
 func floatCheck(result map[string]bool, given string, dotPosition *int) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || given[i] == 46) {
 			result["float"] = false
@@ -248,6 +273,9 @@ func floatCheck(result map[string]bool, given string, dotPosition *int) {
 }
 
 func hexadecimalCheck(result map[string]bool, given string) {
+	if elemWG > 0 {
+		defer wg.Done()
+	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || (given[i] >= 65 && given[i] <= 70)) {
 			result["hexadecimal"] = false
