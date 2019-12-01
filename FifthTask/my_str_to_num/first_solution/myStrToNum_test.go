@@ -11,41 +11,62 @@ func TestWrongData(t *testing.T) {
 	receiveType := map[string]bool{
 		"wrongData": false,
 	}
-	wg.Add(1)
+	createWG(&elemWG, 1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	wrongDataCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, receiveType["wrongData"], "expected \"TRUE\" but received \"nothing\"")
 
 	someString = "B.dA562"
 	receiveType = map[string]bool{
 		"wrongData": false,
 	}
-	wg.Add(1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	wrongDataCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, receiveType["wrongData"], "expected \"TRUE\" but received \"nothing\"")
 
 	someString = "B.562"
 	receiveType = map[string]bool{
 		"wrongData": false,
 	}
-	wg.Add(1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	wrongDataCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, receiveType["wrongData"], "expected \"TRUE\" but received \"nothing\"")
 
 	someString = "14"
 	receiveType["wrongData"] = false
-	wg.Add(1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	wrongDataCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, !receiveType["wrongData"], "expected \"FALSE\", but received \"TRUE\"")
 
 	someString = ".463"
 	receiveType["wrongData"] = true
-	wg.Add(1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	wrongDataCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, receiveType["wrongData"], "expected \"FALSE\", but received \"TRUE\" 1")
 }
 
@@ -54,15 +75,24 @@ func TestBinaryCheck(t *testing.T) {
 	receiveType := map[string]bool{
 		"binary": false,
 	}
-	wg.Add(1)
+	createWG(&elemWG, 1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	binaryCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, receiveType["binary"], "expected \"TRUE\" but received \"nothing\"")
 
 	someString = "101f0201"
-	wg.Add(1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	binaryCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, !receiveType["binary"], "expected \"FALSE\", but received \"TRUE\"")
 }
 
@@ -71,16 +101,25 @@ func TestIntCheck(t *testing.T) {
 	receiveType := map[string]bool{
 		"int": false,
 	}
-	wg.Add(1)
+	createWG(&elemWG, 1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	intCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, receiveType["int"], "expected \"TRUE\" but received \"nothing\"")
 
 	someString = "6.32gs9"
 	receiveType["int"] = true
-	wg.Add(1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	intCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, !receiveType["int"], "expected \"FALSE\", but received \"TRUE\"")
 }
 
@@ -91,24 +130,37 @@ func TestFloatCheck(t *testing.T) {
 	}
 	var receiveDotPosition int
 	expectedDotPosition := 4
-	wg.Add(1)
+	createWG(&elemWG, 1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	floatCheck(receiveType, someString, &receiveDotPosition)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, receiveType["float"], "expected \"TRUE\" but received \"nothing\"")
 	assert.Equal(t, expectedDotPosition, receiveDotPosition, "dot expected at \"4\" position, but received another")
 
 	someString = "1.g463A"
 	receiveType["float"] = true
-	wg.Add(1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	floatCheck(receiveType, someString, &receiveDotPosition)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, !receiveType["float"], "expected \"FALSE\", but received \"TRUE\"")
 
 	someString = ".463"
 	receiveType["float"] = true
-	wg.Add(1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	floatCheck(receiveType, someString, &receiveDotPosition)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, !receiveType["float"], "expected \"FALSE\", but received \"TRUE\"")
 
 }
@@ -118,16 +170,25 @@ func TestHexadecimalCheck(t *testing.T) {
 	receiveType := map[string]bool{
 		"hexadecimal": false,
 	}
-	wg.Add(1)
+	createWG(&elemWG, 1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	hexadecimalCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, receiveType["hexadecimal"], "expected \"TRUE\" but received \"nothing\"")
 
 	someString = "53Fb32uA"
 	receiveType["hexadecimal"] = true
-	wg.Add(1)
+	if elemWG > 0 {
+		wg.Add(elemWG)
+	}
 	hexadecimalCheck(receiveType, someString)
-	wg.Wait()
+	if elemWG > 0 {
+		wg.Wait()
+	}
 	assert.True(t, !receiveType["hexadecimal"], "expected \"FALSE\", but received \"TRUE\"")
 }
 
@@ -318,4 +379,10 @@ func TestMyStrNum(t *testing.T) {
 	expectedNumber = 62346
 	assert.Equal(t, receivedNumber, expectedNumber, "expected \"62346\", but received smth different")
 	assert.Nil(t, err, "expected \"nil\", but received \"smth\"")
+}
+
+func TestCreateWG(t *testing.T) {
+	a := 1
+	createWG(&a, 5)
+	assert.Equal(t, 5, a, "createWG test")
 }
