@@ -1,5 +1,4 @@
 //	This package can translate your number, given as a string, to NUMBER(int, float, ...)
-//	This task is complited, but i need some help. u can see, that i tried to do int with goroutined. Now routines are really helpful. and i need your help. show, how to start it there please.
 package main
 
 import (
@@ -10,16 +9,7 @@ import (
 	"unicode/utf8"
 )
 
-func main() {
-	a, err := myStrToNum("11111010110") //set value here
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(a)
-}
-
-func myStrToNum(givenString string) (result float64, err error) {
+func myStrToNum(givenString string, expectedType string) (result float64, err error) {
 	numberType := map[string]bool{}
 
 	wrongDataCheck(numberType, givenString)
@@ -29,80 +19,89 @@ func myStrToNum(givenString string) (result float64, err error) {
 	floatCheck(numberType, givenString, &dotPosition)
 	hexadecimalCheck(numberType, givenString)
 
-	myType, err := typeDefine(numberType)
-
-	if myType == "wrongData" {
-		return 0.0, errors.New("u gave wrong data")
-	}
+	myType, err := typeDefine(numberType, expectedType)
 
 	fmt.Println("your type is", myType)
 
-	if myType == "binary" {
-		return binaryConverter(givenString)
-	}
+	switch myType {
+	case "binary":
+		{
+			return binaryConverter(givenString)
+		}
 
-	if myType == "int" {
-		return intConverter(givenString)
-	}
+	case "int":
+		{
+			return intConverter(givenString)
+		}
 
-	if myType == "float" {
-		return floatConverter(givenString, dotPosition)
-	}
+	case "float":
+		{
+			return floatConverter(givenString, dotPosition)
+		}
 
-	if myType == "hexadecimal" {
-		return hexadecimalConverter(givenString)
-	}
+	case "hexadecimal":
+		{
+			return hexadecimalConverter(givenString)
+		}
 
-	return 0.0, errors.New("smth went wrong. u need to debug this code...")
+	default:
+		return 0.0, errors.New("u gave wrong data")
+	}
 }
 
-func typeDefine(numberType map[string]bool) (string, error) {
+func typeDefine(numberType map[string]bool, expectedType string) (string, error) {
 	if numberType["wrongData"] {
 		return "wrongData", errors.New("we received wrong data in typeDefine")
 	}
-	var count int
+	var typeCount int
 	var trueState string
 
 	for key, state := range numberType {
 		if state {
-			count++
+			typeCount++
 			trueState = key
 		}
 	}
 
-	if count == 0 {
+	if typeCount == 0 {
 		return "", errors.New("no TRUE types defined")
 	}
 
-	if count > 1 {
+	if typeCount > 1 {
 		if numberType["float"] {
 			return "", errors.New("received float with another types")
 		}
-		/*if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil {		//in this comment stays code, which works, but can't pass tests(this code let's u choose type, if there more, than one variant)
-			return "", err
-		}
-
-		fmt.Println()
-
-		for i, v := range numberType {
-			if v {
-				fmt.Println(i)
+		/*
+			if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil { //in this comment stays code, which works, but can't pass tests
+				return "", err
 			}
-		}
 
-		fmt.Println("Choose one (u need to enter one variant as a string)")
+			fmt.Println()
 
-		var usersChoose string
-		if _, err := fmt.Scan(&usersChoose); err != nil {
-			return "", err
-		}
+			for i, v := range numberType {
+				if v {
+					fmt.Println(i)
+				}
+			}
 
-		if numberType[usersChoose] {
-			return usersChoose, nil
+			fmt.Println("Choose one (u need to enter one variant as a string)")
+
+			var usersChoose string
+			if _, err := fmt.Scan(&usersChoose); err != nil {
+				return "", err
+			}
+
+			if numberType[usersChoose] {
+				return usersChoose, nil
+			} else {
+				return "", errors.New("u made a mistake, during entering one of the variants")
+			}*/
+
+		if numberType[expectedType] {
+			return expectedType, nil
 		} else {
-			return "", errors.New("u made a mistake, during entering one of the variants")
-		}*/
-		return trueState, nil //we will return number with last type in numberType map
+			return "", errors.New("didn't recognized expectedType")
+		}
 	}
 
 	return trueState, nil
@@ -199,12 +198,7 @@ func wrongDataCheck(result map[string]bool, given string) {
 		}
 	}
 
-	if dotCheck && letterCheck { //if in string we have dots and letter together, so it's a mistake
-		result["wrongData"] = true
-		return
-	}
-
-	if dotPosition == 0 && dotCheck {
+	if (dotCheck && letterCheck) || (dotPosition == 0 && dotCheck) { //if in string we have dots and letter together, so it's a mistake
 		result["wrongData"] = true
 		return
 	}
