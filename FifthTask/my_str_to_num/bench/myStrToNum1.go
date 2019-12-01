@@ -31,7 +31,7 @@ func myStrToNum1(givenString string, expectedType string) (result float64, err e
 
 	myType, err := typeDefine(numberType, expectedType)
 
-	fmt.Println("your type is", myType)
+	//fmt.Println("your type is", myType)
 
 	switch myType {
 	case "binary":

@@ -4,17 +4,20 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
+	"strconv"
+	"sync"
 	"unicode/utf8"
 )
 
-//var wg sync.WaitGroup
-//var elemWG int
+var wg2 sync.WaitGroup
+var elemwg2 int
 
 func myStrToNum2(givenString string, expectedType string) (result float64, err error) {
 	numberType := map[string]bool{}
 
-	createWG(&elemWG, 0)
-	wg.Add(elemWG)
+	createwg2(&elemwg2, 0)
+	wg2.Add(elemwg2)
 
 	wrongDataCheck2(numberType, givenString)
 	binaryCheck2(numberType, givenString)
@@ -22,31 +25,31 @@ func myStrToNum2(givenString string, expectedType string) (result float64, err e
 	var dotPosition int
 	hexadecimalCheck2(numberType, givenString)
 
-	wg.Wait()
+	wg2.Wait()
 
-	myType, err := typeDefine(numberType, expectedType)
+	myType, err := typeDefine2(numberType, expectedType)
 
-	fmt.Println("your type is", myType)
+	//fmt.Println("your type is", myType)
 
 	switch myType {
 	case "binary":
 		{
-			return binaryConverter(givenString)
+			return binaryConverter2(givenString)
 		}
 
 	case "int":
 		{
-			return intConverter(givenString)
+			return intConverter2(givenString)
 		}
 
 	case "float":
 		{
-			return floatConverter(givenString, dotPosition)
+			return floatConverter2(givenString, dotPosition)
 		}
 
 	case "hexadecimal":
 		{
-			return hexadecimalConverter(givenString)
+			return hexadecimalConverter2(givenString)
 		}
 
 	default:
@@ -54,12 +57,11 @@ func myStrToNum2(givenString string, expectedType string) (result float64, err e
 	}
 }
 
-/*
-func createWG(elemCount *int, elemAdd int) {
+func createwg2(elemCount *int, elemAdd int) {
 	*elemCount = elemAdd
 }
 
-func typeDefine(numberType map[string]bool, expectedType string) (string, error) {
+func typeDefine2(numberType map[string]bool, expectedType string) (string, error) {
 	if numberType["wrongData"] {
 		return "wrongData", errors.New("we received wrong data in typeDefine")
 	}
@@ -105,7 +107,7 @@ func typeDefine(numberType map[string]bool, expectedType string) (string, error)
 				return usersChoose, nil
 			} else {
 				return "", errors.New("u made a mistake, during entering one of the variants")
-			} //HEED TO CLOSE COMMENT HERE
+			}*/
 
 		if numberType[expectedType] {
 			return expectedType, nil
@@ -117,7 +119,7 @@ func typeDefine(numberType map[string]bool, expectedType string) (string, error)
 	return trueState, nil
 }
 
-func binaryConverter(givenString string) (result float64, err error) {
+func binaryConverter2(givenString string) (result float64, err error) {
 	for i := utf8.RuneCountInString(givenString) - 1; i > -1; i-- {
 		tmpString := givenString[i : i+1] //looks like bad idea. if it can become better, so report
 		if tmp, err := strconv.Atoi(string(tmpString)); err != nil {
@@ -130,7 +132,7 @@ func binaryConverter(givenString string) (result float64, err error) {
 	return result, nil
 }
 
-func intConverter(givenString string) (result float64, err error) {
+func intConverter2(givenString string) (result float64, err error) {
 	if result, err := strconv.Atoi(givenString); err != nil {
 		return 0.0, err
 	} else {
@@ -138,7 +140,7 @@ func intConverter(givenString string) (result float64, err error) {
 	}
 }
 
-func floatConverter(givenString string, dotPosition int) (result float64, err error) {
+func floatConverter2(givenString string, dotPosition int) (result float64, err error) {
 	intPart := givenString[:dotPosition]
 	if string(givenString[dotPosition]) != "." {
 		return 0.0, errors.New("on dot position received smth difference")
@@ -157,7 +159,7 @@ func floatConverter(givenString string, dotPosition int) (result float64, err er
 	return result, nil
 }
 
-func hexadecimalConverter(givenString string) (result float64, err error) {
+func hexadecimalConverter2(givenString string) (result float64, err error) {
 	lettersCost := map[string]int{
 		"0": 0, //if i can use here iota, please show how, because i couldn't find any exaple of using it it maps
 		"1": 1,
@@ -187,11 +189,11 @@ func hexadecimalConverter(givenString string) (result float64, err error) {
 	fmt.Println()
 	return result, nil
 
-}*/
+}
 
 func wrongDataCheck2(result map[string]bool, given string) {
-	if elemWG > 0 {
-		defer wg.Done()
+	if elemwg2 > 0 {
+		defer wg2.Done()
 	}
 	var dotCheck bool
 	var letterCheck bool
@@ -220,8 +222,8 @@ func wrongDataCheck2(result map[string]bool, given string) {
 }
 
 func binaryCheck2(result map[string]bool, given string) {
-	if elemWG > 0 {
-		defer wg.Done()
+	if elemwg2 > 0 {
+		defer wg2.Done()
 	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] == 48 || given[i] == 49) {
@@ -234,8 +236,8 @@ func binaryCheck2(result map[string]bool, given string) {
 }
 
 func intCheck2(result map[string]bool, given string) {
-	if elemWG > 0 {
-		defer wg.Done()
+	if elemwg2 > 0 {
+		defer wg2.Done()
 	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] >= 48 && given[i] <= 57) {
@@ -248,8 +250,8 @@ func intCheck2(result map[string]bool, given string) {
 }
 
 func floatCheck2(result map[string]bool, given string, dotPosition *int) {
-	if elemWG > 0 {
-		defer wg.Done()
+	if elemwg2 > 0 {
+		defer wg2.Done()
 	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || given[i] == 46) {
@@ -270,8 +272,8 @@ func floatCheck2(result map[string]bool, given string, dotPosition *int) {
 }
 
 func hexadecimalCheck2(result map[string]bool, given string) {
-	if elemWG > 0 {
-		defer wg.Done()
+	if elemwg2 > 0 {
+		defer wg2.Done()
 	}
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || (given[i] >= 65 && given[i] <= 70)) {
