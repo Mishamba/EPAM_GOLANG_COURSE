@@ -4,6 +4,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"unicode/utf8"
 )
 
 //var wg sync.WaitGroup
@@ -15,11 +16,11 @@ func myStrToNum2(givenString string, expectedType string) (result float64, err e
 	createWG(&elemWG, 0)
 	wg.Add(elemWG)
 
-	wrongDataCheck(numberType, givenString)
-	binaryCheck(numberType, givenString)
-	intCheck(numberType, givenString)
+	wrongDataCheck2(numberType, givenString)
+	binaryCheck2(numberType, givenString)
+	intCheck2(numberType, givenString)
 	var dotPosition int
-	hexadecimalCheck(numberType, givenString)
+	hexadecimalCheck2(numberType, givenString)
 
 	wg.Wait()
 
@@ -186,9 +187,9 @@ func hexadecimalConverter(givenString string) (result float64, err error) {
 	fmt.Println()
 	return result, nil
 
-}
+}*/
 
-func wrongDataCheck(result map[string]bool, given string) {
+func wrongDataCheck2(result map[string]bool, given string) {
 	if elemWG > 0 {
 		defer wg.Done()
 	}
@@ -218,7 +219,7 @@ func wrongDataCheck(result map[string]bool, given string) {
 	result["wrongData"] = false
 }
 
-func binaryCheck(result map[string]bool, given string) {
+func binaryCheck2(result map[string]bool, given string) {
 	if elemWG > 0 {
 		defer wg.Done()
 	}
@@ -232,7 +233,7 @@ func binaryCheck(result map[string]bool, given string) {
 	result["binary"] = true
 }
 
-func intCheck(result map[string]bool, given string) {
+func intCheck2(result map[string]bool, given string) {
 	if elemWG > 0 {
 		defer wg.Done()
 	}
@@ -246,7 +247,7 @@ func intCheck(result map[string]bool, given string) {
 	result["int"] = true
 }
 
-func floatCheck(result map[string]bool, given string, dotPosition *int) {
+func floatCheck2(result map[string]bool, given string, dotPosition *int) {
 	if elemWG > 0 {
 		defer wg.Done()
 	}
@@ -268,7 +269,7 @@ func floatCheck(result map[string]bool, given string, dotPosition *int) {
 	result["float"] = true
 }
 
-func hexadecimalCheck(result map[string]bool, given string) {
+func hexadecimalCheck2(result map[string]bool, given string) {
 	if elemWG > 0 {
 		defer wg.Done()
 	}
@@ -280,4 +281,4 @@ func hexadecimalCheck(result map[string]bool, given string) {
 	}
 
 	result["hexadecimal"] = true
-}*/
+}
