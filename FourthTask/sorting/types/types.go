@@ -38,22 +38,5 @@ func (p People) Less(i, j int) bool {
 }
 
 func (p People) Swap(i, j int) {
-	var tmp Person
-	tmp = p[i]
-	p[i] = p[j]
-	p[j] = tmp
-}
-
-func NewPeople(args ...Person) (result People) { //this fucn was created for tests
-	for _, v := range args {
-		result = append(result, v)
-	}
-
-	return result
-}
-
-func NewPerson(firstName string, lastName string, newYear, newMonth, newDay int) Person { //this func was created for tests
-	newBirthday := StartDate.AddDate(newYear, newMonth, newDay)
-
-	return Person{firstName, lastName, newBirthday}
+	p[i], p[j] = p[j], p[i]
 }

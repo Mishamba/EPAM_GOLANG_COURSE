@@ -4,13 +4,9 @@ github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:22.37,2
 github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:28.2,28.18 1 1
 github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:31.2,31.35 1 1
 github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:34.2,34.37 1 1
-github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:37.2,37.13 1 1
+github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:37.2,37.13 1 0
 github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:25.18,27.3 1 1
 github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:28.18,30.3 1 1
 github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:31.35,33.3 1 1
-github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:34.37,36.3 1 0
-github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:40.32,45.2 4 1
-github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:47.48,48.25 1 1
-github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:52.2,52.15 1 1
-github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:48.25,50.3 1 1
-github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:55.89,59.2 2 1
+github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:34.37,36.3 1 1
+github.com/Mishamba/EPAM_GOLANG_COURSE/FourthTask/sorting/types/types.go:40.32,42.2 1 1

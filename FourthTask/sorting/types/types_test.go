@@ -50,3 +50,17 @@ func equalSlice(fSlice People, sSlice People) bool {
 
 	return true
 }
+
+func NewPeople(args ...Person) (result People) {
+	for _, v := range args {
+		result = append(result, v)
+	}
+
+	return result
+}
+
+func NewPerson(firstName string, lastName string, newYear, newMonth, newDay int) Person {
+	newBirthday := StartDate.AddDate(newYear, newMonth, newDay)
+
+	return Person{firstName, lastName, newBirthday}
+}

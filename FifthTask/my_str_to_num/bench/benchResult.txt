@@ -1,8 +1,0 @@
-goos: linux
-goarch: amd64
-BenchmarkMyStrToInt1-8   	   10000	    134094 ns/op
-BenchmarkByStrToInt2-8   	   20000	     85882 ns/op
-PASS
-ok  	command-line-arguments	3.945s
-
-second fucntion works much faster.

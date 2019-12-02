@@ -15,44 +15,44 @@ var (
 )
 
 type Figure interface {
-	Area() (float64, error)
-	Perimetr() (float64, error)
+	Area() float64
+	Perimetr() float64
 }
 
 type Circle struct {
 	radius int
 }
 
-func NewCircle(newRadius int) (Figure, error) {
+func NewCircle(newRadius int) (*Circle, error) {
 	if newRadius < 0 {
 		return nil, ErrCircleNegative
 	}
-	return Circle{newRadius}, nil
+	return &Circle{newRadius}, nil
 }
 
-func (c Circle) Area() (float64, error) {
-	return math.Pi * math.Pow(float64(c.radius), 2), nil
+func (c Circle) Area() float64 {
+	return math.Pi * math.Pow(float64(c.radius), 2)
 }
 
-func (c Circle) Perimetr() (float64, error) {
-	return 2.0 * math.Pi * float64(c.radius), nil
+func (c Circle) Perimetr() float64 {
+	return 2.0 * math.Pi * float64(c.radius)
 }
 
 type Square struct {
 	side int
 }
 
-func NewSquare(newSide int) (Figure, error) {
+func NewSquare(newSide int) (*Square, error) {
 	if newSide < 0 {
 		return nil, ErrSquareNegative
 	}
-	return Square{newSide}, nil
+	return &Square{newSide}, nil
 }
 
-func (s Square) Area() (float64, error) {
-	return math.Pow(float64(s.side), 2), nil
+func (s Square) Area() float64 {
+	return math.Pow(float64(s.side), 2)
 }
 
-func (s Square) Perimetr() (float64, error) {
-	return 4.0 * float64(s.side), nil
+func (s Square) Perimetr() float64 {
+	return 4.0 * float64(s.side)
 }

@@ -13,40 +13,26 @@ func main() {
 	}
 
 	var tmp float64
-	if tmp, err = c.Area(); err != nil {
-		panic(err)
-	} else {
-		fmt.Println(tmp)
-	}
+	tmp = c.Area()
+	fmt.Println(tmp)
 
-	if tmp, err = c.Area(); err != nil {
-		panic(err)
-	} else {
-		fmt.Println(tmp)
-	}
+	tmp = c.Area()
+	fmt.Println(tmp)
 
 	sq, err := types.NewSquare(3) //Create square with radius 3.
 	if err != nil {               //Checking errors.
 		panic(err) //If we have errors, we panic. we can't go ahead.
 	}
 
-	tmp, err = sq.Area()
-	if err != nil {
-		panic(err)
-	} else {
-		fmt.Println(tmp)
-	}
+	tmp = sq.Area()
+	fmt.Println(tmp)
 
-	tmp, err = sq.Perimetr()
-	if err != nil {
-		panic(err)
-	} else {
-		fmt.Println(tmp)
-	}
+	tmp = sq.Perimetr()
+	fmt.Println(tmp)
 
-	a, err := types.NewCircle(-3)
-	if err != nil {
-		panic(err)
+	if a, err := types.NewCircle(-3); err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(a)
 	}
-	fmt.Println(a)
 }
