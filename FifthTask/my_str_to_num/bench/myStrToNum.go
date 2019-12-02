@@ -3,35 +3,22 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"math"
 	"strconv"
-	"sync"
 	"unicode/utf8"
 )
 
-var wg sync.WaitGroup
-var elemWG int
-
-func myStrToNum1(givenString string, expectedType string) (result float64, err error) {
+func myStrToNum1(givenString string, expectedType string) (result float64, err error) { //first solution
 	numberType := map[string]bool{}
 
-	createWG(&elemWG, 5)
-	wg.Add(elemWG)
-	var mutex sync.Mutex
-
-	go wrongDataCheck(numberType, givenString, &mutex)
-	go binaryCheck(numberType, givenString, &mutex)
-	go intCheck(numberType, givenString, &mutex)
+	wrongDataCheck(numberType, givenString)
+	binaryCheck(numberType, givenString)
+	intCheck(numberType, givenString)
 	var dotPosition int
-	go floatCheck(numberType, givenString, &dotPosition, &mutex)
-	go hexadecimalCheck(numberType, givenString, &mutex)
-
-	wg.Wait()
+	floatCheck(numberType, givenString, &dotPosition)
+	hexadecimalCheck(numberType, givenString)
 
 	myType, err := typeDefine(numberType, expectedType)
-
-	//fmt.Println("your type is", myType)
 
 	switch myType {
 	case "binary":
@@ -59,8 +46,32 @@ func myStrToNum1(givenString string, expectedType string) (result float64, err e
 	}
 }
 
-func createWG(elemCount *int, elemAdd int) {
-	*elemCount = elemAdd
+func myStrToNum2(givenString string) (float64, error) { //second solution
+	var dotPosition int
+	for i := 0; i < utf8.RuneCountInString(givenString); i++ {
+		if string(givenString[i]) == "." {
+			dotPosition = i
+		}
+	}
+
+	if number, err := binaryConverter(givenString); err == nil {
+		return number, err
+	}
+
+	number, err := intConverter(givenString)
+	if err == nil {
+		return number, err
+	}
+
+	if number, err := floatConverter(givenString, dotPosition); err == nil {
+		return number, err
+	}
+
+	if number, err := hexadecimalConverter(givenString); err == nil {
+		return number, nil
+	} else {
+		return 0.0, err
+	}
 }
 
 func typeDefine(numberType map[string]bool, expectedType string) (string, error) {
@@ -85,31 +96,6 @@ func typeDefine(numberType map[string]bool, expectedType string) (string, error)
 		if numberType["float"] {
 			return "", errors.New("received float with another types")
 		}
-		/*
-			if _, err := fmt.Println("we not sure which number type it is. here u can see our ideas, check one u like the most"); err != nil { //in this comment stays code, which works, but can't pass tests
-				return "", err
-			}
-
-			fmt.Println()
-
-			for i, v := range numberType {
-				if v {
-					fmt.Println(i)
-				}
-			}
-
-			fmt.Println("Choose one (u need to enter one variant as a string)")
-
-			var usersChoose string
-			if _, err := fmt.Scan(&usersChoose); err != nil {
-				return "", err
-			}
-
-			if numberType[usersChoose] {
-				return usersChoose, nil
-			} else {
-				return "", errors.New("u made a mistake, during entering one of the variants")
-			}*/
 
 		if numberType[expectedType] {
 			return expectedType, nil
@@ -124,21 +110,21 @@ func typeDefine(numberType map[string]bool, expectedType string) (string, error)
 func binaryConverter(givenString string) (result float64, err error) {
 	for i := utf8.RuneCountInString(givenString) - 1; i > -1; i-- {
 		tmpString := givenString[i : i+1] //looks like bad idea. if it can become better, so report
-		if tmp, err := strconv.Atoi(string(tmpString)); err != nil {
-			return 0.0, err
-		} else {
-			result += float64(tmp) * math.Pow(2.0, float64(utf8.RuneCountInString(givenString)-i-1))
+		if !(givenString[i] == 48 || givenString[i] == 49) {
+			return 0.0, errors.New("smth wrong was gived in binaryConverter")
 		}
+		tmp, _ := strconv.Atoi(string(tmpString))
+		result += float64(tmp) * math.Pow(2.0, float64(utf8.RuneCountInString(givenString)-i-1))
 	}
-	fmt.Println()
 	return result, nil
 }
 
-func intConverter(givenString string) (result float64, err error) {
-	if result, err := strconv.Atoi(givenString); err != nil {
+func intConverter(givenString string) (float64, error) {
+	tmp, err := strconv.Atoi(givenString)
+	if err != nil {
 		return 0.0, err
 	} else {
-		return float64(result), nil
+		return float64(tmp), nil
 	}
 }
 
@@ -188,22 +174,16 @@ func hexadecimalConverter(givenString string) (result float64, err error) {
 		tmp := lettersCost[string(tmpString[0])]
 		result += float64(tmp) * math.Pow(16.0, float64(utf8.RuneCountInString(givenString)-i-1))
 	}
-	fmt.Println()
 	return result, nil
 
 }
 
-func wrongDataCheck(result map[string]bool, given string, mutex *sync.Mutex) {
-	if elemWG > 0 {
-		defer wg.Done()
-		defer mutex.Unlock()
-	}
+func wrongDataCheck(result map[string]bool, given string) {
 	var dotCheck bool
 	var letterCheck bool
 	var dotPosition int
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if given[i] < 46 || given[i] == 47 || (given[i] >= 58 && given[i] <= 64) || given[i] > 70 {
-			mutex.Lock()
 			result["wrongData"] = true
 			return
 		}
@@ -218,57 +198,38 @@ func wrongDataCheck(result map[string]bool, given string, mutex *sync.Mutex) {
 	}
 
 	if (dotCheck && letterCheck) || (dotPosition == 0 && dotCheck) { //if in string we have dots and letter together, so it's a mistake
-		mutex.Lock()
 		result["wrongData"] = true
 		return
 	}
 
-	mutex.Lock()
 	result["wrongData"] = false
 }
 
-func binaryCheck(result map[string]bool, given string, mutex *sync.Mutex) {
-	if elemWG > 0 {
-		defer wg.Done()
-		defer mutex.Unlock()
-	}
+func binaryCheck(result map[string]bool, given string) {
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] == 48 || given[i] == 49) {
-			mutex.Lock()
 			result["binary"] = false
 			return
 		}
 	}
 
-	mutex.Lock()
 	result["binary"] = true
 }
 
-func intCheck(result map[string]bool, given string, mutex *sync.Mutex) {
-	if elemWG > 0 {
-		defer wg.Done()
-		defer mutex.Unlock()
-	}
+func intCheck(result map[string]bool, given string) {
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !(given[i] >= 48 && given[i] <= 57) {
-			mutex.Lock()
 			result["int"] = false
 			return
 		}
 	}
 
-	mutex.Lock()
 	result["int"] = true
 }
 
-func floatCheck(result map[string]bool, given string, dotPosition *int, mutex *sync.Mutex) {
-	if elemWG > 0 {
-		defer wg.Done()
-		defer mutex.Unlock()
-	}
+func floatCheck(result map[string]bool, given string, dotPosition *int) {
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || given[i] == 46) {
-			mutex.Lock()
 			result["float"] = false
 			return
 		}
@@ -278,28 +239,20 @@ func floatCheck(result map[string]bool, given string, dotPosition *int, mutex *s
 	}
 
 	if *dotPosition == 0 {
-		mutex.Lock()
 		result["float"] = false
 		return
 	}
 
-	mutex.Lock()
 	result["float"] = true
 }
 
-func hexadecimalCheck(result map[string]bool, given string, mutex *sync.Mutex) {
-	if elemWG > 0 {
-		defer wg.Done()
-		defer mutex.Unlock()
-	}
+func hexadecimalCheck(result map[string]bool, given string) {
 	for i := 0; i < utf8.RuneCountInString(given); i++ {
 		if !((given[i] >= 48 && given[i] <= 57) || (given[i] >= 65 && given[i] <= 70)) {
-			mutex.Lock()
 			result["hexadecimal"] = false
 			return
 		}
 	}
 
-	mutex.Lock()
 	result["hexadecimal"] = true
 }
