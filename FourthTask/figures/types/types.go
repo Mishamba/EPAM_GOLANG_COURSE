@@ -15,8 +15,8 @@ var (
 )
 
 type Figure interface {
-	Area() (float64, error)
-	Perimetr() (float64, error)
+	Area() float64
+	Perimetr() float64
 }
 
 type Circle struct {
