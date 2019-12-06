@@ -75,12 +75,11 @@ import (
         "strconv"
 )
 
-func sol1(givenString string) (res int, err error) <span class="cov8" title="1">{
-        res, err = strconv.Atoi(givenString)
-        return
+func myStrToNum1(givenString string) (res int, err error) <span class="cov8" title="1">{
+        return strconv.Atoi(givenString)
 }</span>
 
-func sol2(givenString string) (res int, err error) <span class="cov8" title="1">{
+func myStrToNum2(givenString string) (res int, err error) <span class="cov8" title="1">{
         _, err = fmt.Sscanf(givenString, "%d", &amp;res)
         return
 }</span>

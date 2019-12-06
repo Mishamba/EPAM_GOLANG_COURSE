@@ -7,7 +7,7 @@ import (
 )
 
 type jsStruct struct {
-	Data int  `json:"data"'`
+	Data int  `json:"data"`
 	OK   bool `json:"ok"`
 }
 
@@ -29,9 +29,8 @@ func printMoreTen(k int64) error {
 
 func dejson(out interface{}) error {
 	in := []byte(`{"data": 13, "ok": true}`)
-	if err := json.Unmarshal(in, out); err != nil {
-		return err
-	}
+	_ = json.Unmarshal(in, &out)
 
+	fmt.Println(out)
 	return nil
 }

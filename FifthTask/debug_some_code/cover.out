@@ -5,6 +5,4 @@ github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/debug_some_code/someCodeToDebug
 github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/debug_some_code/someCodeToDebug.go:22.34,23.12 1 1
 github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/debug_some_code/someCodeToDebug.go:26.2,27.12 2 1
 github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/debug_some_code/someCodeToDebug.go:23.12,25.3 1 1
-github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/debug_some_code/someCodeToDebug.go:30.36,32.48 2 1
-github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/debug_some_code/someCodeToDebug.go:36.2,36.12 1 1
-github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/debug_some_code/someCodeToDebug.go:32.48,34.3 1 1
+github.com/Mishamba/EPAM_GOLANG_COURSE/FifthTask/debug_some_code/someCodeToDebug.go:30.36,36.2 4 1

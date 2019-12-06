@@ -37,8 +37,4 @@ func TestDejson(t *testing.T) {
 	smth = &jsStruct{}
 	err := dejson(smth)
 	assert.Nil(t, err, "test 6. err check")
-
-	smth = 5
-	err = dejson(smth)
-	assert.NotNil(t, err, "test 7. err check")
 }
