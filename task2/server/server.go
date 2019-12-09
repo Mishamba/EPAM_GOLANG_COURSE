@@ -14,31 +14,34 @@ func handleAns(conn net.Conn) {
 	defer fmt.Println(conn.RemoteAddr().String(), " closed")
 	defer conn.Close()
 	for {
-		source, err := bufio.NewReader(conn).ReadString('\n')
+		m, err := bufio.NewReader(conn).ReadString(byte('\n'))
 		if err != nil {
-			fmt.Println("can't get message from client")
+			fmt.Println("1")
 			if err != io.EOF {
 				fmt.Println(err)
 			}
 			break
 		}
-		fmt.Println("received ", source)
+		fmt.Println("received ", m)
 
-		str := strings.TrimSuffix(source, string('\n'))
-		if data, err := strconv.Atoi(strings.TrimSuffix(str, string('\n'))); err == nil {
-			_, err := conn.Write([]byte(string(data * 2)))
+		var resp string
+		m = strings.TrimSuffix(m, string('\n'))
+		if len(m) > 0 {
+			n, err := strconv.Atoi(m)
 			if err != nil {
-				fmt.Println("can't send answer for ", conn.RemoteAddr().String())
-				fmt.Println(err)
-				continue
+				resp = strings.ToUpper(m)
+			} else {
+				resp = string(n)
 			}
 		} else {
-			_, err := conn.Write([]byte(strings.ToUpper(string(data))))
-			if err != nil {
-				fmt.Println("can't send answer for ", conn.RemoteAddr().String())
-				fmt.Println(err)
-				continue
-			}
+			resp = "received empty message"
+		}
+
+		_, err = conn.Write([]byte(string(resp)))
+		if err != nil {
+			fmt.Println("can't send answer to ", conn.RemoteAddr().String())
+			fmt.Println(err)
+			continue
 		}
 	}
 }
