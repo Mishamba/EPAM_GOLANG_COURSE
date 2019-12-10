@@ -14,35 +14,32 @@ func handleAns(conn net.Conn) {
 	defer fmt.Println(conn.RemoteAddr().String(), " closed")
 	defer conn.Close()
 	for {
-		m, err := bufio.NewReader(conn).ReadString(byte('\n'))
+		m, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
-			fmt.Println("1")
 			if err != io.EOF {
 				fmt.Println(err)
 			}
 			break
+
 		}
-		fmt.Println("received ", m)
 
 		var resp string
 		m = strings.TrimSuffix(m, string('\n'))
-		if len(m) > 0 {
-			n, err := strconv.Atoi(m)
-			if err != nil {
-				resp = strings.ToUpper(m)
-			} else {
-				resp = string(n)
-			}
+
+		n, err := strconv.Atoi(m)
+		if err != nil {
+			resp = strings.ToUpper(m)
 		} else {
-			resp = "received empty message"
+			n *= 2
+			resp = strconv.Itoa(n)
 		}
 
-		_, err = conn.Write([]byte(string(resp)))
+		_, err = conn.Write([]byte(resp + string('\n')))
 		if err != nil {
-			fmt.Println("can't send answer to ", conn.RemoteAddr().String())
 			fmt.Println(err)
-			continue
+			break
 		}
+
 	}
 }
 

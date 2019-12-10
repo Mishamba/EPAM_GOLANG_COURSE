@@ -37,7 +37,6 @@ func main() {
 
 		conn.Write([]byte(data + string('\n')))
 
-		fmt.Println("waiting for answer")
 		ans, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
 			fmt.Println(err)
