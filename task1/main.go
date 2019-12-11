@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -23,7 +24,7 @@ func HandleAnsw(w http.ResponseWriter, r *http.Request) {
 
 	buf, err := json.Marshal(ans)
 	if err != nil {
-		log.Println(err)
+		fmt.Fprint(w, err)
 		return
 	}
 	w.Header().Set("Content-Type", "applicatioin/json; charset=UTF-8")
