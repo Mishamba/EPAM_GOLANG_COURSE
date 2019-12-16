@@ -10,7 +10,6 @@ import (
 
 type ContactsRepositoryInMemory struct {
 	storage *sql.DB
-	lastID  uint
 }
 
 func NewContactsRepositoryInMemory() *ContactsRepositoryInMemory {
@@ -22,16 +21,16 @@ func NewContactsRepositoryInMemory() *ContactsRepositoryInMemory {
 }
 
 func (r *ContactsRepositoryInMemory) Save(contact model.Contact) (model.Contact, error) {
-	row, err := r.storage.Query("select (Phone, Email) from Contacts")
+	rows, err := r.storage.Query("SELECT (Phone, Email) FROM Contacts")
 	if err != nil {
 		return contact, err
 	}
 
-	defer row.Close()
+	defer rows.Close()
 	var slice []model.Contact
-	for row.Next() {
+	for rows.Next() {
 		var tmp model.Contact
-		err := row.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
+		err := rows.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
 		if err != nil {
 			return contact, err
 		}
@@ -50,26 +49,24 @@ func (r *ContactsRepositoryInMemory) Save(contact model.Contact) (model.Contact,
 		}
 	}
 
-	r.lastID++
-	contact.ID = r.lastID
-	_, err = r.storage.Exec("insert into Contacts (ID, FirstName, LastName, Phone, Email) values ($1, $2, $3, $4, $5)", contact.ID, contact.FirstName, contact.LastName, contact.Phone, contact.Email)
+	_, err = r.storage.Exec("INSERT INTO Contacts (FirstName, LastName, Phone, Email) VALUES ($1, $2, $3, $4, $5)", contact.FirstName, contact.LastName, contact.Phone, contact.Email)
 
 	return contact, nil
 }
 
 func (r *ContactsRepositoryInMemory) ListAll() ([]model.Contact, error) {
 	var result []model.Contact
-	row, err := r.storage.Query("select (ID, FirstName, LastName, Phone, Email) from Contacts")
+	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contacts")
 	if err != nil {
 		return result, err
 	}
 
-	defer row.Close()
-	for row.Next() {
+	defer rows.Close()
+	for rows.Next() {
 		var tmp model.Contact
-		err := row.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
+		err := rows.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
 		if err != nil {
-			return result, err
+			return []model.Contact{}, err
 		}
 
 		result = append(result, tmp)
@@ -80,15 +77,15 @@ func (r *ContactsRepositoryInMemory) ListAll() ([]model.Contact, error) {
 
 func (r *ContactsRepositoryInMemory) GetByID(id uint) (model.Contact, error) {
 	var contact model.Contact
-	row, err := r.storage.Query("select (ID, FirstName, LastName, Phone, Email) from Contacts where ID = ?", id)
+	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contacts WHERE ID = ?", id)
 	if err != nil {
-		return model.Contact{}, nil
+		return model.Contact{}, err
 	}
 
-	defer row.Close()
-	err = row.Scan(&contact.ID, &contact.FirstName, &contact.LastName, &contact.Phone, &contact.Email)
+	defer rows.Close()
+	err = rows.Scan(&contact.ID, &contact.FirstName, &contact.LastName, &contact.Phone, &contact.Email)
 	if err != nil {
-		return contact, nil
+		return model.Contact{}, err
 	}
 
 	return contact, nil
@@ -96,15 +93,15 @@ func (r *ContactsRepositoryInMemory) GetByID(id uint) (model.Contact, error) {
 
 func (r *ContactsRepositoryInMemory) GetByPhone(phone string) (model.Contact, error) {
 	var contact model.Contact
-	row, err := r.storage.Query("select (ID, FirstName, LastName, Phone, Email) from Contacts where ID = ?", phone)
+	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contacts WHERE Phone = ?", phone)
 	if err != nil {
-		return model.Contact{}, nil
+		return model.Contact{}, err
 	}
 
-	defer row.Close()
-	err = row.Scan(&contact.ID, &contact.FirstName, &contact.LastName, &contact.Phone, &contact.Email)
+	defer rows.Close()
+	err = rows.Scan(&contact.ID, &contact.FirstName, &contact.LastName, &contact.Phone, &contact.Email)
 	if err != nil {
-		return contact, nil
+		return model.Contact{}, err
 	}
 
 	return contact, nil
@@ -112,15 +109,15 @@ func (r *ContactsRepositoryInMemory) GetByPhone(phone string) (model.Contact, er
 
 func (r *ContactsRepositoryInMemory) GetByEmail(email string) (model.Contact, error) {
 	var contact model.Contact
-	row, err := r.storage.Query("select (ID, FirstName, LastName, Phone, Email) from Contact where Email = ?", email)
+	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contact WHERE Email = ?", email)
 	if err != nil {
 		return contact, err
 	}
 
-	defer row.Close()
-	err = row.Scan(&contact.ID, &contact.FirstName, &contact.LastName, &contact.Phone, &contact.Email)
+	defer rows.Close()
+	err = rows.Scan(&contact.ID, &contact.FirstName, &contact.LastName, &contact.Phone, &contact.Email)
 	if err != nil {
-		return contact, nil
+		return model.Contact{}, err
 	}
 
 	return model.Contact{}, fmt.Errorf("record not found")
@@ -128,17 +125,17 @@ func (r *ContactsRepositoryInMemory) GetByEmail(email string) (model.Contact, er
 
 func (r *ContactsRepositoryInMemory) SearchByName(name string) ([]model.Contact, error) {
 	var contacts []model.Contact
-	row, err := r.storage.Query("select (ID, FirstName, LastName, Phone, Email) from Contacts where Email = ?", name)
+	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contacts WHERE FistName = ?", name)
 	if err != nil {
-		return contacts, nil
+		return contacts, err
 	}
 
-	defer row.Close()
-	for row.Next() {
+	defer rows.Close()
+	for rows.Next() {
 		var tmp model.Contact
-		err := row.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
+		err := rows.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
 		if err != nil {
-			return contacts, err
+			return []model.Contact{}, err
 		}
 
 		contacts = append(contacts, tmp)
@@ -147,14 +144,12 @@ func (r *ContactsRepositoryInMemory) SearchByName(name string) ([]model.Contact,
 }
 
 func (r *ContactsRepositoryInMemory) Delete(id uint) error {
-	info, err := r.storage.Exec("delete from Contacts where id = ?", id)
+	info, err := r.storage.Exec("DELETE FROM Contacts WHERE id = ?", id)
 	if err != nil {
 		return err
 	}
 
-	count, _ := info.RowsAffected()
-
-	if count > 1 {
+	if count, _ := info.RowsAffected(); count > 1 {
 		return errors.New("deleted " + string(count) + " strings, but expected one")
 	}
 
