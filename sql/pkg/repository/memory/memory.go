@@ -8,20 +8,13 @@ import (
 	"github.com/Mishamba/EPAM_GOLANG_COURSE/sql/pkg/model"
 )
 
-type ContactsRepositoryInMemory struct {
-	storage *sql.DB
-}
-
-func NewContactsRepositoryInMemory() *ContactsRepositoryInMemory {
+func NewContactsRepositoryInMemory(r *sql.DB) {
 	connStr := "user=mishamba password=123 dbname=some-postgres sslmode=disable" //TODO
-	db, _ := sql.Open("postgres", connStr)
-	return &ContactsRepositoryInMemory{
-		storage: db,
-	}
+	r, _ = sql.Open("postgres", connStr)
 }
 
-func (r *ContactsRepositoryInMemory) Save(contact model.Contact) (model.Contact, error) {
-	rows, err := r.storage.Query("SELECT (Phone, Email) FROM Contacts")
+func Save(r *sql.DB, contact model.Contact) (model.Contact, error) {
+	rows, err := r.Query("SELECT (phone, email) FROM Contacts")
 	if err != nil {
 		return contact, err
 	}
@@ -40,7 +33,6 @@ func (r *ContactsRepositoryInMemory) Save(contact model.Contact) (model.Contact,
 
 	for _, c := range slice {
 		if c.Email == contact.Email {
-
 			return model.Contact{}, fmt.Errorf("contact with email %q already exists", c.Email)
 		}
 
@@ -49,14 +41,14 @@ func (r *ContactsRepositoryInMemory) Save(contact model.Contact) (model.Contact,
 		}
 	}
 
-	_, err = r.storage.Exec("INSERT INTO Contacts (FirstName, LastName, Phone, Email) VALUES ($1, $2, $3, $4, $5)", contact.FirstName, contact.LastName, contact.Phone, contact.Email)
+	_, err = r.Exec("INSERT INTO Contacts (first_name, last_name, phone, email) VALUES ($1, $2, $3, $4, $5)", contact.FirstName, contact.LastName, contact.Phone, contact.Email)
 
 	return contact, nil
 }
 
-func (r *ContactsRepositoryInMemory) ListAll() ([]model.Contact, error) {
+func ListAll(r *sql.DB) ([]model.Contact, error) {
 	var result []model.Contact
-	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contacts")
+	rows, err := r.Query("SELECT (ID, first_name, last_name, phone, email) FROM Contacts")
 	if err != nil {
 		return result, err
 	}
@@ -75,9 +67,9 @@ func (r *ContactsRepositoryInMemory) ListAll() ([]model.Contact, error) {
 	return result, nil
 }
 
-func (r *ContactsRepositoryInMemory) GetByID(id uint) (model.Contact, error) {
+func GetByID(r *sql.DB, id uint) (model.Contact, error) {
 	var contact model.Contact
-	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contacts WHERE ID = ?", id)
+	rows, err := r.Query("SELECT (ID, first_name, last_name, phone, email) FROM Contacts WHERE ID = ?", id)
 	if err != nil {
 		return model.Contact{}, err
 	}
@@ -91,9 +83,9 @@ func (r *ContactsRepositoryInMemory) GetByID(id uint) (model.Contact, error) {
 	return contact, nil
 }
 
-func (r *ContactsRepositoryInMemory) GetByPhone(phone string) (model.Contact, error) {
+func GetByPhone(r *sql.DB, phone string) (model.Contact, error) {
 	var contact model.Contact
-	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contacts WHERE Phone = ?", phone)
+	rows, err := r.Query("SELECT (ID, first_name, last_name, phone, email) FROM Contacts WHERE phone = ?", phone)
 	if err != nil {
 		return model.Contact{}, err
 	}
@@ -107,9 +99,9 @@ func (r *ContactsRepositoryInMemory) GetByPhone(phone string) (model.Contact, er
 	return contact, nil
 }
 
-func (r *ContactsRepositoryInMemory) GetByEmail(email string) (model.Contact, error) {
+func GetByEmail(r *sql.DB, email string) (model.Contact, error) {
 	var contact model.Contact
-	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contact WHERE Email = ?", email)
+	rows, err := r.Query("SELECT (ID, FirstName, LastName, phone, Email) FROM Contact WHERE Email = ?", email)
 	if err != nil {
 		return contact, err
 	}
@@ -123,9 +115,9 @@ func (r *ContactsRepositoryInMemory) GetByEmail(email string) (model.Contact, er
 	return model.Contact{}, fmt.Errorf("record not found")
 }
 
-func (r *ContactsRepositoryInMemory) SearchByName(name string) ([]model.Contact, error) {
+func SearchByName(r *sql.DB, name string) ([]model.Contact, error) {
 	var contacts []model.Contact
-	rows, err := r.storage.Query("SELECT (ID, FirstName, LastName, Phone, Email) FROM Contacts WHERE FistName = ?", name)
+	rows, err := r.Query("SELECT (ID, first_name, last_name, phone, email) FROM Contacts WHERE first_name = ?", name)
 	if err != nil {
 		return contacts, err
 	}
@@ -143,8 +135,8 @@ func (r *ContactsRepositoryInMemory) SearchByName(name string) ([]model.Contact,
 	return contacts, nil
 }
 
-func (r *ContactsRepositoryInMemory) Delete(id uint) error {
-	info, err := r.storage.Exec("DELETE FROM Contacts WHERE id = ?", id)
+func Delete(r *sql.DB, id uint) error {
+	info, err := r.Exec("DELETE FROM Contacts WHERE ID = ?", id)
 	if err != nil {
 		return err
 	}

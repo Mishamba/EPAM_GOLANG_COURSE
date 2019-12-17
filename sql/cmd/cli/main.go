@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -19,7 +20,8 @@ const (
 )
 
 func main() {
-	repository := memory.NewContactsRepositoryInMemory()
+	var r *sql.DB
+	memory.NewContactsRepositoryInMemory(r)
 
 	for {
 		fmt.Print(menu)
@@ -30,31 +32,31 @@ func main() {
 
 		switch command {
 		case CommandSave:
-			if err := Save(repository); err != nil {
+			if err := Save(r); err != nil {
 				log.Println(err)
 			}
 		case CommandListAll:
-			if err := ListAll(repository); err != nil {
+			if err := ListAll(r); err != nil {
 				log.Println(err)
 			}
 		case CommandGetByID:
-			if err := GetByID(repository); err != nil {
+			if err := GetByID(r); err != nil {
 				log.Println(err)
 			}
 		case CommandGetByPhone:
-			if err := GetByPhone(repository); err != nil {
+			if err := GetByPhone(r); err != nil {
 				log.Println(err)
 			}
 		case CommandGetByEmail:
-			if err := GetByEmail(repository); err != nil {
+			if err := GetByEmail(r); err != nil {
 				log.Println(err)
 			}
 		case CommandSearchByName:
-			if err := SearchByName(repository); err != nil {
+			if err := SearchByName(r); err != nil {
 				log.Println(err)
 			}
 		case CommandDelete:
-			if err := Delete(repository); err != nil {
+			if err := Delete(r); err != nil {
 				log.Println(err)
 			}
 		default:
@@ -65,8 +67,8 @@ func main() {
 	}
 }
 
-func ListAll(rep model.ContactsRepository) error {
-	records, err := rep.ListAll()
+func ListAll(r *sql.DB) error {
+	records, err := memory.ListAll(r)
 	if err != nil {
 		return fmt.Errorf("error in ListAll: %q", err.Error())
 	}
@@ -79,10 +81,10 @@ func ListAll(rep model.ContactsRepository) error {
 	return nil
 }
 
-func GetByID(rep model.ContactsRepository) error {
+func GetByID(r *sql.DB) error {
 	id := readUint("Please enter an 'ID' field and press Enter")
 
-	record, err := rep.GetByID(id)
+	record, err := memory.GetByID(r, id)
 	if err != nil {
 		return fmt.Errorf("error in GetByID: %q", err.Error())
 	}
@@ -93,10 +95,10 @@ func GetByID(rep model.ContactsRepository) error {
 	return nil
 }
 
-func GetByPhone(rep model.ContactsRepository) error {
+func GetByPhone(r *sql.DB) error {
 	phone := readString("Please enter an 'Phone' field and press Enter")
 
-	record, err := rep.GetByPhone(phone)
+	record, err := memory.GetByPhone(r, phone)
 	if err != nil {
 		return fmt.Errorf("error in GetByPhone: %q", err.Error())
 	}
@@ -107,10 +109,10 @@ func GetByPhone(rep model.ContactsRepository) error {
 	return nil
 }
 
-func GetByEmail(rep model.ContactsRepository) error {
+func GetByEmail(r *sql.DB) error {
 	email := readString("Please enter an 'Email' field and press Enter")
 
-	record, err := rep.GetByEmail(email)
+	record, err := memory.GetByEmail(r, email)
 	if err != nil {
 		return fmt.Errorf("error in GetByEmail: %q", err.Error())
 	}
@@ -121,10 +123,10 @@ func GetByEmail(rep model.ContactsRepository) error {
 	return nil
 }
 
-func SearchByName(rep model.ContactsRepository) error {
+func SearchByName(r *sql.DB) error {
 	email := readString("Please enter prefix for 'Name' field and press Enter")
 
-	records, err := rep.SearchByName(email)
+	records, err := memory.SearchByName(r, email)
 	if err != nil {
 		return fmt.Errorf("error in SearchByName: %q", err.Error())
 	}
@@ -137,10 +139,10 @@ func SearchByName(rep model.ContactsRepository) error {
 	return nil
 }
 
-func Delete(rep model.ContactsRepository) error {
+func Delete(r *sql.DB) error {
 	id := readUint("Please enter an 'ID' field and press Enter")
 
-	if err := rep.Delete(id); err != nil {
+	if err := memory.Delete(r, id); err != nil {
 		return fmt.Errorf("error in GetByID: %q", err.Error())
 	}
 
@@ -148,7 +150,7 @@ func Delete(rep model.ContactsRepository) error {
 	return nil
 }
 
-func Save(rep model.ContactsRepository) error {
+func Save(r *sql.DB) error {
 	contact := model.Contact{
 		FirstName: readString("Please enter an 'FirstName' field and press Enter"),
 		LastName:  readString("Please enter an 'LastName' field and press Enter"),
@@ -157,7 +159,7 @@ func Save(rep model.ContactsRepository) error {
 		Email: readString("Please enter an 'Email' field and press Enter"),
 	}
 
-	result, err := rep.Save(contact)
+	result, err := memory.Save(r, contact)
 	if err != nil {
 		return err
 	}
