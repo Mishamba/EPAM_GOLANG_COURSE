@@ -24,7 +24,7 @@ func main() {
 			break
 		}
 		check := strings.TrimSuffix(data, string('\n'))
-		if check == "EXIT" {
+		if check == "exit" {
 			break
 		}
 		conn.Write([]byte(data + string('\n')))
