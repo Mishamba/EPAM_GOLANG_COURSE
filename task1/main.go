@@ -24,6 +24,7 @@ func HandleAnsw(w http.ResponseWriter, r *http.Request) {
 
 	buf, err := json.Marshal(ans)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, err)
 		return
 	}

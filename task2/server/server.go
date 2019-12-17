@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"net"
 	"strconv"
@@ -16,11 +15,8 @@ func handleAns(conn net.Conn) {
 	for {
 		m, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
-			if err != io.EOF {
-				fmt.Println(err)
-			}
+			fmt.Println(err)
 			break
-
 		}
 
 		var resp string
@@ -47,14 +43,13 @@ func main() {
 	ln, err := net.Listen("tcp", ":8083")
 	defer ln.Close()
 	if err != nil {
-		log.Fatal("1) ", err)
+		log.Fatal(err)
 	}
 
 	for {
 		conn, err := ln.Accept()
 		fmt.Println(conn.RemoteAddr().String(), " connected")
 		if err != nil {
-			fmt.Print("2) ")
 			panic(err)
 		}
 		go handleAns(conn)

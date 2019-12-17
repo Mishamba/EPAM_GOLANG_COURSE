@@ -34,7 +34,7 @@ func handleConn(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("error.html")
 		t.Execute(w, errorToSend{
 			http.StatusText(http.StatusMethodNotAllowed),
-			http.StatusText(http.StatusMethodNotAllowed),
+			"can't answer on such a request...",
 		})
 	}
 
@@ -43,7 +43,7 @@ func handleConn(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("error.html")
 		t.Execute(w, errorToSend{
 			http.StatusText(http.StatusNotFound),
-			http.StatusText(http.StatusNotFound),
+			"can't parse file...",
 		})
 		return
 	}
