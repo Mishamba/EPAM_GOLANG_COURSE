@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/Mishamba/EPAM_GOLANG_COURSE/sql/pkg/model"
-	"github.com/Mishamba/EPAM_GOLANG_COURSE/sql/pkg/repository/memory"
+	"github.com/Mishamba/EPAM_GOLANG_COURSE/sql/pkg/repository/db"
 )
 
 const (
@@ -21,7 +21,7 @@ const (
 
 func main() {
 	var r *sql.DB
-	memory.NewContactsRepositoryInMemory(r)
+	db.NewContactsRepositoryInMemory(r)
 
 	for {
 		fmt.Print(menu)
@@ -68,7 +68,7 @@ func main() {
 }
 
 func ListAll(r *sql.DB) error {
-	records, err := memory.ListAll(r)
+	records, err := db.ListAll(r)
 	if err != nil {
 		return fmt.Errorf("error in ListAll: %q", err.Error())
 	}
@@ -84,7 +84,7 @@ func ListAll(r *sql.DB) error {
 func GetByID(r *sql.DB) error {
 	id := readUint("Please enter an 'ID' field and press Enter")
 
-	record, err := memory.GetByID(r, id)
+	record, err := db.GetByID(r, id)
 	if err != nil {
 		return fmt.Errorf("error in GetByID: %q", err.Error())
 	}
@@ -98,7 +98,7 @@ func GetByID(r *sql.DB) error {
 func GetByPhone(r *sql.DB) error {
 	phone := readString("Please enter an 'Phone' field and press Enter")
 
-	record, err := memory.GetByPhone(r, phone)
+	record, err := db.GetByPhone(r, phone)
 	if err != nil {
 		return fmt.Errorf("error in GetByPhone: %q", err.Error())
 	}
@@ -112,7 +112,7 @@ func GetByPhone(r *sql.DB) error {
 func GetByEmail(r *sql.DB) error {
 	email := readString("Please enter an 'Email' field and press Enter")
 
-	record, err := memory.GetByEmail(r, email)
+	record, err := db.GetByEmail(r, email)
 	if err != nil {
 		return fmt.Errorf("error in GetByEmail: %q", err.Error())
 	}
@@ -126,7 +126,7 @@ func GetByEmail(r *sql.DB) error {
 func SearchByName(r *sql.DB) error {
 	email := readString("Please enter prefix for 'Name' field and press Enter")
 
-	records, err := memory.SearchByName(r, email)
+	records, err := db.SearchByName(r, email)
 	if err != nil {
 		return fmt.Errorf("error in SearchByName: %q", err.Error())
 	}
@@ -142,7 +142,7 @@ func SearchByName(r *sql.DB) error {
 func Delete(r *sql.DB) error {
 	id := readUint("Please enter an 'ID' field and press Enter")
 
-	if err := memory.Delete(r, id); err != nil {
+	if err := db.Delete(r, id); err != nil {
 		return fmt.Errorf("error in GetByID: %q", err.Error())
 	}
 
@@ -159,7 +159,7 @@ func Save(r *sql.DB) error {
 		Email: readString("Please enter an 'Email' field and press Enter"),
 	}
 
-	result, err := memory.Save(r, contact)
+	result, err := db.Save(r, contact)
 	if err != nil {
 		return err
 	}

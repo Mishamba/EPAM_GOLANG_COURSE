@@ -1,37 +1,30 @@
 package memory
 
 import (
-	"database/sql"
-	"errors"
 	"fmt"
+	"strings"
+	"sync"
 
-	"github.com/Mishamba/EPAM_GOLANG_COURSE/sql/pkg/model"
+	"github.com/burov/task_databases/pkg/model"
 )
 
-func NewContactsRepositoryInMemory(r *sql.DB) {
-	connStr := "user=mishamba password=123 dbname=some-postgres sslmode=disable" //TODO
-	r, _ = sql.Open("postgres", connStr)
+type ContactsRepositoryInMemory struct {
+	sync.RWMutex
+	storage map[uint]model.Contact
+	lastID  uint
 }
 
-func Save(r *sql.DB, contact model.Contact) (model.Contact, error) {
-	rows, err := r.Query("SELECT (phone, email) FROM Contacts")
-	if err != nil {
-		return contact, err
+func NewContactsRepositoryInMemory() *ContactsRepositoryInMemory {
+	return &ContactsRepositoryInMemory{
+		storage: make(map[uint]model.Contact),
 	}
+}
 
-	defer rows.Close()
-	var slice []model.Contact
-	for rows.Next() {
-		var tmp model.Contact
-		err := rows.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
-		if err != nil {
-			return contact, err
-		}
+func (r *ContactsRepositoryInMemory) Save(contact model.Contact) (model.Contact, error) {
+	r.Lock()
+	defer r.Unlock()
 
-		slice = append(slice, tmp)
-	}
-
-	for _, c := range slice {
+	for _, c := range r.storage {
 		if c.Email == contact.Email {
 			return model.Contact{}, fmt.Errorf("contact with email %q already exists", c.Email)
 		}
@@ -41,109 +34,82 @@ func Save(r *sql.DB, contact model.Contact) (model.Contact, error) {
 		}
 	}
 
-	_, err = r.Exec("INSERT INTO Contacts (first_name, last_name, phone, email) VALUES ($1, $2, $3, $4, $5)", contact.FirstName, contact.LastName, contact.Phone, contact.Email)
+	r.lastID++
+	contact.ID = r.lastID
+	r.storage[contact.ID] = contact
 
 	return contact, nil
 }
 
-func ListAll(r *sql.DB) ([]model.Contact, error) {
-	var result []model.Contact
-	rows, err := r.Query("SELECT (ID, first_name, last_name, phone, email) FROM Contacts")
-	if err != nil {
-		return result, err
-	}
+func (r *ContactsRepositoryInMemory) ListAll() ([]model.Contact, error) {
+	r.RLock()
+	defer r.RUnlock()
 
-	defer rows.Close()
-	for rows.Next() {
-		var tmp model.Contact
-		err := rows.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
-		if err != nil {
-			return []model.Contact{}, err
-		}
-
-		result = append(result, tmp)
+	result := make([]model.Contact, 0, len(r.storage))
+	for _, c := range r.storage {
+		result = append(result, c)
 	}
 
 	return result, nil
 }
 
-func GetByID(r *sql.DB, id uint) (model.Contact, error) {
-	var contact model.Contact
-	rows, err := r.Query("SELECT (ID, first_name, last_name, phone, email) FROM Contacts WHERE ID = ?", id)
-	if err != nil {
-		return model.Contact{}, err
-	}
+func (r *ContactsRepositoryInMemory) GetByID(id uint) (model.Contact, error) {
+	r.RLock()
+	defer r.RUnlock()
 
-	defer rows.Close()
-	err = rows.Scan(&contact.ID, &contact.FirstName, &contact.LastName, &contact.Phone, &contact.Email)
-	if err != nil {
-		return model.Contact{}, err
+	contact, ok := r.storage[id]
+	if !ok {
+		return model.Contact{}, fmt.Errorf("record not found")
 	}
 
 	return contact, nil
 }
 
-func GetByPhone(r *sql.DB, phone string) (model.Contact, error) {
-	var contact model.Contact
-	rows, err := r.Query("SELECT (ID, first_name, last_name, phone, email) FROM Contacts WHERE phone = ?", phone)
-	if err != nil {
-		return model.Contact{}, err
-	}
+func (r *ContactsRepositoryInMemory) GetByPhone(phone string) (model.Contact, error) {
+	r.RLock()
+	defer r.RUnlock()
 
-	defer rows.Close()
-	err = rows.Scan(&contact.ID, &contact.FirstName, &contact.LastName, &contact.Phone, &contact.Email)
-	if err != nil {
-		return model.Contact{}, err
-	}
-
-	return contact, nil
-}
-
-func GetByEmail(r *sql.DB, email string) (model.Contact, error) {
-	var contact model.Contact
-	rows, err := r.Query("SELECT (ID, FirstName, LastName, phone, Email) FROM Contact WHERE Email = ?", email)
-	if err != nil {
-		return contact, err
-	}
-
-	defer rows.Close()
-	err = rows.Scan(&contact.ID, &contact.FirstName, &contact.LastName, &contact.Phone, &contact.Email)
-	if err != nil {
-		return model.Contact{}, err
+	for _, c := range r.storage {
+		if c.Phone == phone {
+			return c, nil
+		}
 	}
 
 	return model.Contact{}, fmt.Errorf("record not found")
 }
 
-func SearchByName(r *sql.DB, name string) ([]model.Contact, error) {
-	var contacts []model.Contact
-	rows, err := r.Query("SELECT (ID, first_name, last_name, phone, email) FROM Contacts WHERE first_name = ?", name)
-	if err != nil {
-		return contacts, err
-	}
+func (r *ContactsRepositoryInMemory) GetByEmail(email string) (model.Contact, error) {
+	r.RLock()
+	defer r.RUnlock()
 
-	defer rows.Close()
-	for rows.Next() {
-		var tmp model.Contact
-		err := rows.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
-		if err != nil {
-			return []model.Contact{}, err
+	for _, c := range r.storage {
+		if c.Email == email {
+			return c, nil
 		}
-
-		contacts = append(contacts, tmp)
 	}
-	return contacts, nil
+
+	return model.Contact{}, fmt.Errorf("record not found")
 }
 
-func Delete(r *sql.DB, id uint) error {
-	info, err := r.Exec("DELETE FROM Contacts WHERE ID = ?", id)
-	if err != nil {
-		return err
+func (r *ContactsRepositoryInMemory) SearchByName(n string) ([]model.Contact, error) {
+	r.RLock()
+	defer r.RUnlock()
+
+	result := make([]model.Contact, len(r.storage))
+	for _, c := range r.storage {
+		if strings.HasPrefix(c.FirstName, n) || strings.HasPrefix(c.LastName, n) {
+			result = append(result, c)
+		}
 	}
 
-	if count, _ := info.RowsAffected(); count > 1 {
-		return errors.New("deleted " + string(count) + " strings, but expected one")
-	}
+	return result, nil
+}
+
+func (r *ContactsRepositoryInMemory) Delete(id uint) error {
+	r.Lock()
+	defer r.Unlock()
+
+	delete(r.storage, id)
 
 	return nil
 }
