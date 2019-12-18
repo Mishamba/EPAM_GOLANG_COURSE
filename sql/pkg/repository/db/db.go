@@ -14,34 +14,10 @@ func NewContactsRepositoryInMemory(r *sql.DB) {
 }
 
 func Save(r *sql.DB, contact model.Contact) (model.Contact, error) {
-	rows, err := r.Query("SELECT (phone, email) FROM Contacts")
+	_, err := r.Exec("INSERT INTO Contacts (first_name, last_name, phone, email) VALUES ($1, $2, $3, $4, $5)", contact.FirstName, contact.LastName, contact.Phone, contact.Email)
 	if err != nil {
-		return contact, err
+		return model.Contact{}, err
 	}
-
-	defer rows.Close()
-	var slice []model.Contact
-	for rows.Next() {
-		var tmp model.Contact
-		err := rows.Scan(&tmp.ID, &tmp.FirstName, &tmp.LastName, &tmp.Phone, &tmp.Email)
-		if err != nil {
-			return contact, err
-		}
-
-		slice = append(slice, tmp)
-	}
-
-	for _, c := range slice {
-		if c.Email == contact.Email {
-			return model.Contact{}, fmt.Errorf("contact with email %q already exists", c.Email)
-		}
-
-		if c.Phone == contact.Phone {
-			return model.Contact{}, fmt.Errorf("contact with phone %q already exists", c.Phone)
-		}
-	}
-
-	_, err = r.Exec("INSERT INTO Contacts (first_name, last_name, phone, email) VALUES ($1, $2, $3, $4, $5)", contact.FirstName, contact.LastName, contact.Phone, contact.Email)
 
 	return contact, nil
 }
